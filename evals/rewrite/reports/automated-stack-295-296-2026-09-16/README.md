@@ -44,7 +44,7 @@ charges.
 **Gate result: FAIL.** Codex assessed 15 of 16 final responses as meeting the
 frozen scenario assertions. The MiMo protected-content response fails both a
 required edit and truthful reporting about its delivered text. The stack stays
-unmerged; the remaining blocker is [#322](https://github.com/conorbronsdon/avoid-ai-writing/issues/322).
+unmerged; the remaining blocker is [#322](https://github.com/alvarodevbr/avoid-ai-writing/issues/322).
 
 | Scenario | Claude | MiMo | Assessed outcome |
 |---|---|---|---|
@@ -164,7 +164,7 @@ full rewrite once. The frozen assertions do not prohibit prefaces; this report
 does not claim exact template compliance. Model-only catalog attribution also
 varies: a final Claude detect response incorrectly calls `unlocks` a Tier 2
 table entry, although `unlock` appears as a replacement for `unleash`, and
-transition severity labels vary. These observations are tracked in [#323](https://github.com/conorbronsdon/avoid-ai-writing/issues/323). The detect case establishes
+transition severity labels vary. These observations are tracked in [#323](https://github.com/alvarodevbr/avoid-ai-writing/issues/323). The detect case establishes
 read-only scope, findings/assessment, and execution honesty, not catalog-label
 accuracy or authorship classification quality.
 

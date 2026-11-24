@@ -1,268 +1,120 @@
-# Contributing
+# Contribuindo (Contributing)
 
-Thanks for helping improve this skill. It teaches an LLM (and now a deterministic
-engine) to spot and fix AI-writing tells. Contributions are welcome — a few things
-keep the project coherent.
+Obrigado por ajudar a melhorar esta skill. Ela ensina um LLM (e agora um motor determinístico) a identificar e corrigir sinais de escrita de IA. Contribuições são bem-vindas — algumas diretrizes mantêm o projeto coerente.
 
-## Choosing an issue
+## Escolhendo uma issue
 
-Check the assignee, comments, and linked PRs to see whether someone is already
-working on an issue. For an unclaimed issue, leave a short comment letting us
-know you're starting. We appreciate the heads-up, and you can begin right away:
-you do not need to wait for assignment or maintainer confirmation. If someone
-is already working on it, coordinate with them before duplicating their work.
-If the issue explicitly needs a design decision before implementation, resolve
-that question first.
+Verifique a pessoa atribuída, comentários e PRs vinculados para ver se alguém já está trabalhando em uma issue. Para uma issue livre, deixe um comentário curto avisando que está começando. Você pode começar imediatamente: não precisa esperar por atribuição ou confirmação de mantenedor.
 
-Issues labeled `good first issue` are reserved for people making their first
-contribution to this repository. Take only one for your first PR; leave the
-others for fellow newcomers, including while your PR is awaiting review.
-
-You are also welcome to propose your own issues and ideas.
+Issues rotuladas como `good first issue` são reservadas para pessoas fazendo sua primeira contribuição neste repositório. Pegue apenas uma para o seu primeiro PR; deixe as outras para outros novatos.
 
 > [!IMPORTANT]
-> If you've already contributed here, choose a `help wanted` issue without the
-`good first issue` label, propose another improvement, or help review and test
-newcomer PRs. Please leave `good first issue`s for new contributors. 
+> Se você já contribuiu aqui, escolha uma issue `help wanted` sem o rótulo `good first issue`, proponha outra melhoria ou ajude a revisar e testar PRs de novos colaboradores.
 
-## How the repo fits together
+## Como o repositório se organiza
 
-| Path | What it holds |
-|------|---------------|
-| `SKILL.md` | Entry instructions, severity tiers, output formats, and guardrails. |
-| `references/patterns.md` | Canonical pattern catalog, word tiers, context and voice profiles. |
-| `detector/patterns.js` | The deterministic engine — the executable subset of the rules. |
-| `detector/CATEGORIES.md` | The map between references/patterns.md rules and detector `type`s. Keep it current. |
-| `README.md` | The pitch and the numbered prose-pattern list. |
-| [`GLOSSARY.md`](GLOSSARY.md) | One-line definitions of the project's terms, each linked to its canonical source. |
-| `cursor-rules/`, `plugins/` | Editor and tool integrations. |
-| `skills/` | The seven ChatGPT/Codex Skills and their validated connection graph. See [`OPENAI_PLUGIN.md`](OPENAI_PLUGIN.md); changes to `SKILL.md` modes or output can break them. |
+| Caminho | O que contém |
+|---|---|
+| `SKILL.md` | Instruções de entrada, níveis de gravidade, formatos de saída e diretrizes de proteção. |
+| `references/patterns.md` | Catálogo canônico de padrões, camadas de vocabulário, perfis de contexto e de voz. |
+| `detector/patterns.js` | O motor determinístico — o subconjunto executável das regras. |
+| `detector/CATEGORIES.md` | O mapa entre as regras de `references/patterns.md` e os `type`s do detector. Mantenha-o atualizado. |
+| `README.md` | A apresentação e a lista numerada de padrões de prosa. |
+| [`GLOSSARY.md`](GLOSSARY.md) | Definições de uma linha dos termos do projeto, cada uma vinculada à sua fonte canônica. |
+| `cursor-rules/`, `plugins/` | Integrações com editores e ferramentas. |
+| `skills/` | As sete Skills para ChatGPT/Codex e seu grafo de conexão validado. Veja [`OPENAI_PLUGIN.md`](OPENAI_PLUGIN.md); mudanças nos modos ou na saída de `SKILL.md` podem quebrá-las. |
 
-## Adding or changing a rule
+## Adicionando ou alterando uma regra
 
-First decide which kind of rule it is:
+Primeiro decida que tipo de regra ela é:
 
-- **Regex-detectable** (a phrase, a character, a structural shape) → add it to
-  `references/patterns.md`, add the detection to `detector/patterns.js` with a new `type`, and
-  add a row to `detector/CATEGORIES.md`. Cover it with a fixture in
-  `detector/patterns.test.js` (both a true positive and a case that must *not*
-  fire).
-  The category contract in `detector/categories.test.js` requires each type
-  to appear by name in that fixture file. The phrase-level gaps listed in its
-  `LEGACY_UNCOVERED_TYPES` are explicit exceptions while #213 and the related
-  false-positive fixes are open; remove an entry when its fixtures land, and
-  never add one. The name check prevents omissions but does not replace
-  assertions that the intended behavior fires and stays clean.
-- **Judgment-only** (needs reading for meaning — tone, structure, name-dropping)
-  → add it to `references/patterns.md` prose and list it under "Skill-only" in
-  `detector/CATEGORIES.md`. There is no detector type for these.
+- **Detectável por regex** (uma frase, um caractere, uma forma estrutural) → adicione a `references/patterns.md`, adicione a detecção a `detector/patterns.js` com um novo `type`, e adicione uma linha a `detector/CATEGORIES.md`. Cubra-a com um teste em `detector/patterns.test.js` (tanto um verdadeiro positivo quanto um caso que *não* deve disparar).
+- **Apenas julgamento (Judgment-only)** (exige leitura de sentido — tom, estrutura, desfile de citações) → adicione à prosa de `references/patterns.md` e liste em "Skill-only" em `detector/CATEGORIES.md`. Não há tipo de detector para estas.
 
-If you are unsure which it is, open an issue first and we will sort it out.
-The [pattern proposal form](https://github.com/conorbronsdon/avoid-ai-writing/issues/new?template=pattern_proposal.yml)
-asks for what triage needs, including the example that must stay clean.
+### Contagem de categorias de padrões (catálogo de detecção)
 
-### Pattern-category count (detection catalog)
+Quando você adiciona ou remove um `###` de detecção sob `## What to remove or fix` em `references/patterns.md` (não prosa de julgamento ou testes do lado do autor), a CI deriva o novo total e o compara a dois literais:
 
-When you add or remove a detection `###` under `## What to remove or fix` in
-`references/patterns.md` (not judgment-only prose or writer-side tests), CI
-derives the new total and compares it to two literals:
+1. **`README.md`** — atualize o item `**NN pattern categories**` para corresponder à contagem derivada.
+2. **`AGENTS.md`** — atualize a expressão citada `README "NN pattern categories" bullet` na orientação de contagem de padrões para corresponder ao mesmo número.
 
-1. **`README.md`** — update the `**NN pattern categories**` feature bullet to
-   match the derived count.
-2. **`AGENTS.md`** — update the quoted `README "NN pattern categories" bullet`
-   phrase in the pattern-count guidance so it matches the same number.
+`scripts/check-pattern-count.sh` valida ambos em cada PR. Adicionar uma linha na tabela de palavras exige apenas atualizar o item separado `**NN-entry word replacement table**` no README (mesmo script).
 
-`scripts/check-pattern-count.sh` enforces both on every PR. Adding a word-table
-row instead only requires bumping the separate `**NN-entry word replacement
-table**` README bullet (same script).
+## Piloto de cartões de decisão editorial (Editorial decision-card pilot)
 
-## Editorial decision-card pilot
+Entradas selecionadas do catálogo possuem um ID de regra `ec-`, um mapeamento parcial de detector, condições de aplicabilidade e exemplos de edição/manutenção/lacuna (`Apply`, `Edit`, `Keep`, `Flag a gap`). Preserve esses IDs e âncoras de seção ao refinar um cartão.
 
-Selected catalog entries have an `ec-` rule ID, a partial detector mapping,
-applicability conditions, and edit/keep/gap examples. Preserve those IDs and
-existing section anchors when refining a card. Keep its source exceptions and
-attribution; do not infer semantic equivalence from a detector mapping.
+## Precisão acima de revocação (Precision over recall)
 
-For a card change, include a justified edit and a contrasting must-preserve
-case. Check scope, source uncertainty, authentic voice, protected content, and
-missing information. Evaluate the delivered rewrite and any retained gap;
-matching a preferred sentence or reducing a detector score is not the goal.
-The pilot does not require converting the whole catalog or adding a rule DSL.
+Esta skill é deliberadamente enviesada para falsos negativos: uma regra que sinaliza erroneamente a escrita humana comum é pior do que uma que deixa passar um sinal de IA, porque falsos positivos corroem a confiança em todas as outras regras. Antes de propor uma regra, pergunte quem seria sinalizado por engano e adicione exceções (*carve-outs*) para os casos legítimos.
 
-## Precision over recall
+## Cite suas fontes
 
-This skill is deliberately biased toward false negatives: a rule that wrongly
-flags ordinary human writing is worse than one that misses a tell, because false
-positives erode trust in every other rule. Before proposing a rule, ask who would
-get flagged by mistake, and add carve-outs for the legitimate cases. A signal
-that fires on most normal prose is not worth adding.
-
-## Cite your sources
-
-If your rule rests on a factual claim about how AI or humans write — "ChatGPT
-emits curly quotes by default," "most writers rarely do X" — link a source for
-it. These claims get checked, and some turn out wrong or more nuanced than they
-first seem (smart quotes, for instance, are a typing-time default on macOS and in
-Word, not a publication-step artifact). A claim with a citation can be verified;
-an asserted one can't. Put the links in the PR description or inline in the rule.
+Se sua regra se baseia em uma afirmação factual sobre como a IA ou os humanos escrevem, inclua um link de fonte para ela.
 
 ## Language adaptations
 
-This skill and its deterministic detector are calibrated for English. Start a
-non-English adaptation in a separately maintained fork or repository, with its
-own language-specific rules and release process. We can discuss bringing a
-well-maintained adaptation into this repo later if its maintainers want shared
-ownership and we can sustain its tests and review. A translated word list alone
-does not establish that the rules work in another language.
+Esta skill foi adaptada para o Português Brasileiro (PT-BR), mantendo compatibilidade técnica com o detector determinístico e o ecossistema original em inglês. Ao expandir regras específicas de idioma:
 
-Identify the target language, dialect, audience, and registers. Rebuild lexical
-tiers from native-language writing rather than translating English entries;
-check which structural rules transfer and add language-specific exceptions.
-Show positive and must-not-fire examples across relevant registers, especially
-ordinary human writing that a rule might flag. Describe your sample provenance,
-what was measured, and what remains editorial judgment. Do not publish
-authorship or false-positive claims without evidence for that language and
-register. State known limitations, including dialect and formal-register cases.
-Keep the upstream license and attribution when adapting this work.
+Identifique o idioma-alvo, dialeto, público e registros. Construa camadas lexicais a partir da escrita nativa em vez de apenas traduzir literalmente entradas do inglês; verifique quais regras estruturais se transferem e adicione exceções específicas do idioma (como as regras do Acordo Ortográfico da Língua Portuguesa e a preferência por *sentence case* em títulos no Brasil). Mostre exemplos positivos e casos que não devem disparar em registros relevantes. Mantenha a licença e a atribuição upstream ao adaptar este trabalho.
 
-To request a link in the [community section](README.md#community--multilingual),
-open an issue with the repository URL, maintainer, language and dialect, a short
-description of the native-language changes, evidence and limitations, and where
-users should report problems. We review links for a clear scope, an accountable
-maintainer, and honest claims. A link helps readers discover your adaptation;
-it does not mean this repository maintains it or certifies its accuracy.
+Para solicitar um link na [seção da comunidade](README.md#community--multilingual), abra uma issue com a URL do repositório, mantenedor, idioma e dialeto, uma breve descrição das mudanças nativas, evidências e limitações.
 
-## Style guides and licensing
+## Guias de estilo e licenciamento
 
-The rules from the [#88 license audit](https://github.com/conorbronsdon/avoid-ai-writing/issues/88), recorded here so nobody has to rediscover them:
+As regras da [auditoria de licenças #88](https://github.com/alvarodevbr/avoid-ai-writing/issues/88):
 
-- **This repo bundles no style guide it cannot verify the license for.** The `--style` layer is config-driven; users supply their own conventions.
-- **Openly-licensed guides may ship later as example configs** (Google, Microsoft, GOV.UK, and 18F qualify), using Vale's attribution pattern: disclaim endorsement, name the license, link the guide upstream.
-- **Paywalled guides (CMOS, APA, MLA, AP) are never shipped, in any form, under any name.** Passing one to `--style` falls through to the fallback that claims no compliance. The reason is trademark and verifiability, not maintenance burden.
+- **Este repositório não inclui nenhum guia de estilo cuja licença não possa ser verificada.** A camada `--style` é orientada por configuração; os usuários fornecem suas próprias convenções.
+- **Guias de licença aberta podem ser distribuídos posteriormente como configurações de exemplo** (Google, Microsoft, GOV.UK e 18F se qualificam).
+- **Guias pagos (CMOS, APA, MLA, AP, ABNT NBR) nunca são distribuídos no pacote, sob nenhuma forma ou nome.** Passar um deles para `--style` cai no fallback que não reivindica conformidade.
 
-## Development setup
+## Configuração de desenvolvimento
 
-Fork the repository and clone your fork. The Node minimum is `engines.node` in
-`package.json`. The sync scripts also need Bash and Python 3. After editing
-`SKILL.md` or `references/patterns.md`, regenerate the copies:
+Faça um fork do repositório e clone-o. A versão mínima do Node é `engines.node` no `package.json` (`>=18`). Os scripts de sincronização também precisam de Bash e Python 3. Após editar `SKILL.md` ou `references/patterns.md`, regenere as cópias:
 
 ```bash
 bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh
 ```
 
-The next section covers running the full suite and a single test file.
-
-## Run the tests
+## Executando os testes
 
 ```bash
 npm test
 ```
 
-`npm test` runs every suite via `scripts/run-tests.js` and prints a combined
-summary; earlier failures do not skip later files. To run one suite:
+`npm test` executa todas as suítes via `scripts/run-tests.js` e imprime um resumo combinado. Para rodar apenas uma suíte:
 
 ```bash
 node scripts/run-tests.js detector/patterns.test.js
-# or invoke the file directly:
+# ou invoque o arquivo diretamente:
 node detector/patterns.test.js
 ```
 
-This runs the engine fixtures and the `CATEGORIES.md` contract checks: every
-detector `type` must be documented, every documented type must be real, and every
-prose statement of the engine `type` total must match the code. All must pass. No
-dependencies to install; Node 18+ only.
+Nenhuma dependência externa é necessária; apenas Node 18+.
 
-## Documentation drift
+## Desvio de documentação (Documentation drift)
 
-The `SSOT / ssot` CI job checks repository-local Node requirements using
-`.ssot-local.yaml` on every PR. `package.json` owns the detector's Node minimum;
-README and contributor instructions carry checked copies. Existing generated
-skill, version, and pattern-count checks keep their own ownership.
+O job de CI `SSOT / ssot` verifica os requisitos locais de versão do Node do repositório usando `.ssot-local.yaml` em cada PR. O `package.json` detém o mínimo do Node do detector (`>=18`).
 
-The separate `.ssot.yaml` and `promo-drift` workflow track cross-repo promotional
-counts on release and schedule. Both workflows pin the checker revision; the
-local PR check needs no sibling repositories or private credentials.
+## Escreva prosa limpa
 
-Registered drift, missing copies, and malformed manifests fail CI. Fix the
-claim and its copies, and explain any change to canonical ownership or removed
-locators. Do not remove checks merely to make a failure disappear.
-
-Discovery is advisory and scans prose, not every source format or value. The
-Node minimum needs its explicit locators. Historical releases, example corpora,
-and generated bundles are excluded from discovery. The initial remaining
-warnings are fictional funding/percentage examples and repeated editing-budget
-guidance. Inspect a warning before registering a fact or excluding a path;
-explicitly registered copies remain checked even in excluded files.
-
-To reproduce CI, check out the checker revision pinned in
-`.github/workflows/ssot.yml` into a sibling `ssot-check` directory, then run:
-
-```bash
-python3 ../ssot-check/ssot_check.py check --strict --manifest .ssot-local.yaml
-python3 ../ssot-check/ssot_check.py discover --manifest .ssot-local.yaml --untracked-only --github-annotations
-python3 scripts/check-ssot-controls.py ../ssot-check/ssot_check.py
-```
-
-The controls mutate disposable copies and verify drift, restoration, missing
-locations/manifests, and invalid manifests. They also prove that history can be
-excluded while a new unregistered current copy still warns without failing
-`check`. Record useful findings, repeated warnings, and maintenance effort in
-the pilot PR or a follow-up issue before expanding coverage.
-
-## Write clean prose
-
-This repo polices writing quality, so the prose you add has to clear the same
-bar. Run your additions through the skill itself. Keep rule bullets terse and
-lead with the directive — match the length and tone of the bullets already in
-`SKILL.md`. Drop intensifiers like "strong" or "powerful"; let the rule stand on
-its own.
-
-Quote or backtick example vocabulary in changelog entries and docs; the self-scan
-exempts quoted spans, inline code, code blocks, tables, and blockquotes.
+Este repositório fiscaliza a qualidade da escrita, portanto a prosa que você adicionar precisa passar pelo mesmo crivo. Passe suas adições pela própria skill. Coloque entre aspas ou crases o vocabulário de exemplo em entradas de changelog e documentação; a autoverificação (`self-scan`) isenta trechos entre aspas, código inline, blocos de código, tabelas e citações em bloco.
 
 ## Changelog and versioning
 
-Add an entry under `## [Unreleased]` in `CHANGELOG.md` when a change affects
-users: detection or rewriting behavior, writing rules, public APIs or CLI
-options, configuration, installation or packaging, compatibility, or security.
+Adicione uma entrada sob `## [Unreleased]` no `CHANGELOG.md` quando uma alteração afetar os usuários: comportamento de detecção ou reescrita, regras de escrita, APIs públicas ou opções de CLI, configuração, instalação ou empacotamento, compatibilidade ou segurança.
 
-Skip the changelog for routine docs corrections, links, formatting, contributor
-guidance, tests, and internal refactoring or CI maintenance with no user-facing
-effect. Describe those changes in the PR. A docs or maintenance label does not
-exempt a change that affects how the tool works, is installed or used, or is
-supported.
+Pule o changelog para correções rotineiras de documentação, links, formatação, orientação de colaboradores, testes e refatoração interna ou manutenção de CI sem efeito visível ao usuário.
 
-When preparing a release, move its Unreleased entries under a dated, versioned
-heading (`## [X.Y.Z] — YYYY-MM-DD`) and update the matching versions in
-`SKILL.md`, `package.json`, the three plugin manifests, and the six hand-written
-Skill frontmatters under `skills/` (every `skills/*/SKILL.md` except the
-generated `skills/avoid-ai-writing/SKILL.md`). A release that adds a writing
-rule needs a minor version bump. Exempt changes need no version bump; leave published
-release entries intact.
+Ao preparar um lançamento, mova as entradas de `Unreleased` para um cabeçalho versionado e datado (`## [X.Y.Z] — YYYY-MM-DD`) e atualize as versões correspondentes em `SKILL.md`, `package.json`, nos três manifestos de plugin e nos seis frontmatters escritos à mão sob `skills/`.
 
-After changing either canonical file, run `bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh`. This regenerates both bundles, `SKILL.full.md`, and the portable paste/Cursor artifacts; CI checks parity. Do not edit generated copies.
+Após alterar qualquer arquivo canônico, execute `bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh`. Não edite cópias geradas manualmente.
 
-Maintainers should follow [the release recovery procedure](docs/releasing.md)
-instead of moving a tag or reusing a published version after a failed run.
+## Checklist de lançamento (Release checklist)
 
-## Release checklist
+1. Mova as entradas de `## [Unreleased]` para um cabeçalho versionado e datado (`## [X.Y.Z] — YYYY-MM-DD`).
+2. Defina a mesma versão no frontmatter de `SKILL.md`, `package.json`, `plugins/avoid-ai-writing/.claude-plugin/plugin.json`, `plugins/avoid-ai-writing/.antigravity-plugin/plugin.json`, `.codex-plugin/plugin.json` e na linha `version:` dos seis arquivos `skills/*/SKILL.md` escritos à mão.
+3. Execute `bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh`.
+4. Execute `npm test` e `python3 scripts/validate-openai-plugin.py . --json`.
 
-The release workflow publishes when a version change reaches `main`, so merge
-the version bump only when the release is ready.
-
-1. Move the `## [Unreleased]` entries under a dated, versioned heading
-   (`## [X.Y.Z] — YYYY-MM-DD`). A release that adds a writing rule needs a
-   minor version bump.
-2. Set the same version in the `SKILL.md` frontmatter, `package.json`,
-   `plugins/avoid-ai-writing/.claude-plugin/plugin.json`,
-   `plugins/avoid-ai-writing/.antigravity-plugin/plugin.json`,
-   `.codex-plugin/plugin.json`, and the `version:` line of the six
-   hand-written `skills/*/SKILL.md` files. The sync scripts do not write these
-   versions; `scripts/validate-openai-plugin.py` fails when a Skill's version
-   differs from the OpenAI manifest.
-3. Run `bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh`.
-   The first script fails when a manifest or `package.json` version differs
-   from `SKILL.md`.
-4. Run `npm test` and `python3 scripts/validate-openai-plugin.py . --json`.
-
-If a release run fails, follow [the release recovery procedure](docs/releasing.md).
+Se uma execução de release falhar, siga [o procedimento de recuperação de release](docs/releasing.md).

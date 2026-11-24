@@ -1,62 +1,37 @@
-# ChatGPT and Codex plugin package
+# Pacote de plugin para ChatGPT e Codex
 
-This repository contains a native ChatGPT and Codex plugin package while keeping the existing Claude plugin and the canonical `SKILL.md` and `references/patterns.md`.
+Este repositório contém um pacote nativo de plugin para ChatGPT e Codex, mantendo o plugin Claude existente e os arquivos canônicos `SKILL.md` e `references/patterns.md` (traduzidos e adaptados para o Português Brasileiro).
 
-The [Avoid AI Writing directory listing](https://chatgpt.com/plugins/plugins_6a9b77b18b8881918efa9c1255868164) showed version 3.29.0 on 2026-09-23; that submission was approved and published on 2026-09-04. The version in this repository may be newer than the published plugin. Check the listing for the version currently available to install.
+## Arquitetura
 
-## Architecture
+O pacote público é baseado exclusivamente em Skills. O projeto separado `avoid-ai-writing-mcp` permanece opcional e não é empacotado nem obrigatório.
 
-The public package is skills-only. The separate `avoid-ai-writing-mcp` project remains optional and is not bundled or required.
+Os arquivos canônicos `SKILL.md` e `references/patterns.md` permanecem como a autoridade editorial. O pacote OpenAI adiciona Skills de fluxo de trabalho focadas em torno dele:
 
-The canonical `SKILL.md` and `references/patterns.md` remains the editorial authority. The OpenAI package adds focused workflow Skills around it:
+- `avoid-ai-writing`: cópia gerada da Skill original, idêntica exceto pela omissão do bloco `metadata` no frontmatter (que o portal da OpenAI rejeita)
+- `avoid-ai-writing-router`: orquestração para pedidos mistos e de múltiplas etapas
+- `ai-writing-detector`: fluxo de trabalho somente detecção com o detector determinístico empacotado
+- `voice-preserving-rewriter`: responsável pela reescrita de texto retornado
+- `file-edit-in-place`: responsável pela mutação restrita de arquivos explicitamente nomeados
+- `preservation-verifier`: gate de preservação antes/depois
+- `false-positive-reviewer`: guardrail terminal de interpretação
 
-- `avoid-ai-writing`: generated copy of the original Skill, identical except that the frontmatter `metadata` block (agentskills.io/OpenClaw fields) is omitted because the OpenAI portal rejects it
-- `avoid-ai-writing-router`: orchestration for mixed and multi-stage requests
-- `ai-writing-detector`: detect-only workflow with the bundled deterministic detector
-- `voice-preserving-rewriter`: returned-text rewrite owner
-- `file-edit-in-place`: narrow mutation owner for explicitly named files
-- `preservation-verifier`: before/after preservation gate
-- `false-positive-reviewer`: terminal interpretation guardrail
+## Grafo de Skills conectadas
 
-## Connected Skill graph
+O grafo legível por máquina está em `skills/avoid-ai-writing-router/references/skill-graph.json`.
 
-The machine-readable graph is `skills/avoid-ai-writing-router/references/skill-graph.json`.
+A rede usa relacionamentos tipados:
 
-The network uses typed relationships rather than loose prose references:
+- `ROUTE` seleciona um responsável primário.
+- `FEED` passa evidências para outra etapa solicitada.
+- `VERIFY` envia conteúdo antes/depois para o gate de preservação.
+- `REPAIR` retorna um escopo de preservação que falhou para o responsável correto uma vez, quando o orçamento compartilhado de passagens de edição tem espaço.
+- `RECHECK` permite uma auditoria residual limitada quando solicitada.
+- `ESCALATE` envia questões de interpretação para o revisor terminal.
 
-- `ROUTE` selects a primary owner.
-- `FEED` passes evidence into another requested stage.
-- `VERIFY` sends before/after content to the preservation gate.
-- `REPAIR` returns a failed preservation scope to the correct owner once when the shared requested editing-pass budget has room.
-- `RECHECK` permits one bounded residual audit when requested.
-- `ESCALATE` sends interpretation questions to the terminal reviewer.
+## Validação
 
-Conditional guards live in `skill-graph.json` `guards` and the handoff envelope; they constrain semantics without adding a graph edge or changing the primary owner.
-
-Cross-stage state follows `skills/avoid-ai-writing-router/references/handoff-contract.md`. The envelope carries requested scope, explicit user corrections, the canonical context profile separately from detector mode, voice, protected constraints, execution evidence, detector summary, verification state, risk flags, and pass limits without making each Skill infer them again.
-
-Terminal Skills have no outgoing Skill edges. Every permitted graph cycle must pass through an edge with `max_reentries: 1`, and corrective edits and repairs share the requested editing-pass budget, capped at two.
-
-## Agency review lenses
-
-The graph design was reviewed through four existing agency Skill roles without adding them as public Plugin dependencies:
-
-- `agency-software-architect`: ownership, dependency direction, graph boundaries, loop control, fallback
-- `agency-ai-engineer`: detector semantics, uncertainty, context propagation, false-positive discipline, evaluation
-- `agency-senior-developer`: executable handoffs, mutation evidence, failure propagation, package/CI behavior
-- `agency-inclusive-visuals-specialist`: conditional protection of identity-sensitive details when the cleaned text is itself a visual prompt or creative brief involving people
-
-The encoded review rules live in `skills/avoid-ai-writing-router/references/agency-role-lenses.md`.
-
-The representation lens is conditional. It protects cultural, geographic, age, disability, attire, lighting, physical-reality, and anti-stereotype meaning in visual prompts without turning ordinary writing cleanup into a visual-generation workflow.
-
-## Local marketplace
-
-The repo marketplace entry is `.agents/plugins/marketplace.json` and points to the repository root. ChatGPT and Codex discover the native manifest at `.codex-plugin/plugin.json`.
-
-## Validation
-
-Run:
+Execute:
 
 ```bash
 python3 skills/avoid-ai-writing-router/scripts/validate_connections.py .
@@ -64,31 +39,12 @@ python3 scripts/validate-openai-plugin.py . --json
 python3 scripts/package-openai-plugin.py . /tmp/avoid-ai-writing.zip --json
 ```
 
-The connection validator fails on dangling graph nodes, missing incoming/outgoing routes, terminal-node leaks, unbounded graph cycles, missing handoff references, legacy graph files, and drift between the public Skill inventory and the graph.
+## Fonte da verdade
 
-The packager emits a deterministic archive containing only the public Plugin surface. The connection validator itself is inside the router Skill, so the same graph check can run against a clean extracted ZIP.
-
-The archive does not include repository CI, corpus data, development-only utilities, the Claude marketplace, or the optional external MCP server.
-
-## Routing evals
-
-`submission/discovery-evals.json` covers:
-
-- direct discovery
-- indirect intent
-- negative triggers
-- expected multi-stage paths
-- repair/recheck limits
-- tie breakers
-- handoff fields that must persist
-- conditional human-representation guards
-
-## Source of truth
-
-After changing `SKILL.md` or `references/patterns.md`, run:
+Após alterar `SKILL.md` ou `references/patterns.md`, execute:
 
 ```bash
 bash scripts/sync-plugin-skill.sh
 ```
 
-That updates both generated plugin copies and verifies that the Claude and OpenAI manifests match the canonical Skill version.
+Isso atualiza ambas as cópias geradas do plugin e verifica se os manifestos do Claude, Antigravity e OpenAI correspondem à versão canônica da Skill.

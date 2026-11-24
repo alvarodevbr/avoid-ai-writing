@@ -2,105 +2,80 @@
 name: preservation-verifier
 version: 3.39.1
 license: MIT
-description: Use when the user provides an original and rewritten version, asks whether a rewrite preserved protected content, or wants a deterministic check for code, frontmatter, quotes, tables, links, paths, numbers, headings, and residual AI-pattern regressions.
+description: Use quando o usuário fornecer uma versão original e uma reescrita, perguntar se uma reescrita preservou o conteúdo protegido ou quiser uma verificação determinística de código, frontmatter, citações, tabelas, links, caminhos, números, cabeçalhos e regressões residuais de padrões de IA.
 ---
 
 # Preservation Verifier
 
-Verify that a rewrite or file edit kept the content the original `../avoid-ai-writing/SKILL.md` says to protect.
+Verifique se uma reescrita ou edição de arquivo manteve o conteúdo que o `../avoid-ai-writing/SKILL.md` original manda proteger.
 
-For cross-Skill work, follow `../avoid-ai-writing-router/references/handoff-contract.md` and `../avoid-ai-writing-router/references/skill-graph.json`.
+Para trabalho entre Skills, siga `../avoid-ai-writing-router/references/handoff-contract.md` e `../avoid-ai-writing-router/references/skill-graph.json`.
 
 ## Connection contract
 
-### Incoming
+### Entrada (Incoming)
 
-Accept before/after verification from:
+Aceite verificação antes/depois vinda de:
 
-- `avoid-ai-writing-router` via `ROUTE` when the user directly supplies before and after material.
-- `voice-preserving-rewriter` via `VERIFY` after returned-text rewriting.
-- `file-edit-in-place` via `VERIFY` after an authorized named-file mutation.
+- `avoid-ai-writing-router` via `ROUTE` quando o usuário fornecer diretamente o material antes e depois.
+- `voice-preserving-rewriter` via `VERIFY` após reescrita de texto retornado.
+- `file-edit-in-place` via `VERIFY` após mutação autorizada de arquivo nomeado.
 
-Require both original and current versions. If either is unavailable, return control to the router rather than inventing a comparison.
+Exija ambas as versões (original e atual). Se qualquer uma estiver indisponível, devolva o controle ao roteador em vez de inventar uma comparação.
 
-### Produce
+### Produção (Produce)
 
-Update the handoff envelope with:
+Atualize o envelope de handoff com:
 
-- `execution_evidence.verifier`: `executed` only if the bundled validator ran, otherwise `model_only`.
-- `verification_summary.status`: `PASS`, `REVIEW`, or `FAIL`.
-- blocking errors and warnings.
-- exact repair target when repair is possible.
+- `execution_evidence.verifier`: `executed` somente se o validador empacotado rodou, caso contrário `model_only`.
+- `verification_summary.status`: `PASS`, `REVIEW` ou `FAIL`.
+- erros bloqueantes e avisos.
+- alvo exato de reparo quando o reparo for possível.
 
-A `FAIL` is a blocking workflow result. The rewrite/edit stage is not complete merely because text was produced or a file write succeeded.
+### Saída (Outgoing)
 
-### Outgoing
+- `REPAIR` para `voice-preserving-rewriter` quando o texto retornado falhou na preservação e o orçamento compartilhado de edição tiver espaço.
+- `REPAIR` para `file-edit-in-place` quando um arquivo nomeado falhou na preservação e o orçamento compartilhado de edição tiver espaço.
+- `RECHECK` para `ai-writing-detector` apenas quando convergência ou auditoria residual fizer parte do pedido do usuário.
+- Pare em `PASS` a menos que reste outra etapa solicitada pelo usuário.
+- Pare e relate em caso de segunda falha de verificação. Não inicie outro loop de reparo.
 
-- `REPAIR` to `voice-preserving-rewriter` when returned text failed preservation and the shared editing budget has room.
-- `REPAIR` to `file-edit-in-place` when a named file failed preservation and the shared editing budget has room.
-- `RECHECK` to `ai-writing-detector` only when convergence or a residual audit was part of the user's request.
-- Stop on `PASS` unless another user-requested stage remains.
-- Stop and report on a second verification failure. Do not start another repair loop.
+## Lentes de arquitetura e implementação
 
-## Architecture and implementation lenses
+Aplique ambas as lentes codificadas em `../avoid-ai-writing-router/references/agency-role-lenses.md` (`agency-software-architect` e `agency-senior-developer`). O verificador não reescreve conteúdo por conta própria.
 
-Apply both encoded lenses from `../avoid-ai-writing-router/references/agency-role-lenses.md`:
+## Caminho determinístico preferencial
 
-- `agency-software-architect`: verification is a boundary gate with explicit ownership and bounded repair cycles.
-- `agency-senior-developer`: execution claims require actual command evidence, errors propagate, and before/after state remains attributable to the correct target.
-
-The verifier does not rewrite content itself.
-
-## Preferred deterministic path
-
-The bundled `scripts/validate.js` is an exact copy of the source repository's preservation validator. When Node execution is available, run:
+O script empacotado `scripts/validate.js` é uma cópia exata do validador de preservação do repositório-fonte. Quando a execução em Node estiver disponível, execute:
 
 ```bash
 node scripts/validate.js --residual-policy warn before.md after.md
 ```
 
-For programmatic use:
+Para uso programático:
 
 ```js
 const { validate } = require("./scripts/validate.js");
 const result = validate(original, rewritten, { residualPolicy: "warn" });
 ```
 
-Use the explicit `warn` residual policy for editorial verification. The validator exposes mechanical `preservation` results separately from `quality` diagnostics while retaining top-level errors, warnings, and stats. Residual growth stays visible as a warning; it is not proof of content damage and does not by itself authorize a repair. A skipped, unavailable, or unscored quality check is not a clean residual audit. It does not decide whether a semantic change was grounded in an explicit user correction or whether the user specifically authorized editing a normally protected span. Never claim it ran unless the current host executed it.
+Se a execução estiver indisponível, compare o original e a reescrita manualmente usando o mesmo contrato de preservação e rotule o resultado como `model_only`.
 
-If execution is unavailable, compare the original and rewrite manually using the same preservation contract and label the result as `model_only`.
-
-## Additional protected constraints
-
-In addition to the canonical validator's structural checks, apply the canonical editing contract in a separate semantic review. Check remaining meaning, attribution, quantities and units, negation, conditions, causality, uncertainty, and speaker experience. Treat an explicit user correction as the intended change rather than an invention. If the user specifically placed a normally protected span in scope, verify that requested change and continue protecting its data and attribution; do not infer permission from a general cleanup, style, or voice request. Report this review as model-only rather than claiming the deterministic validator performed it.
-
-When `human_representation_sensitive: true`, review identity and representation details protected by the `agency-inclusive-visuals-specialist` lens. A structurally valid rewrite may still require `REVIEW` or `FAIL` if it erased or genericized material cultural, geographic, disability, attire, skin-tone/lighting, physical-reality, or anti-stereotype constraints.
-
-Do not claim the deterministic validator checked semantic representation details that it does not implement. Report that portion separately as model-only semantic review.
-
-## Result handling
+## Tratamento de resultados
 
 ### PASS
-
-No blocking mechanical preservation error was found and no warning or semantic concern remains unresolved. If the user requested a residual audit, PASS also requires `quality.status: checked`; `skipped`, `unavailable`, or `unscored` requires REVIEW even when a number-spelling warning has been resolved. This does not prove semantic fidelity. Continue only if another requested stage remains.
+Nenhum erro mecânico bloqueante de preservação foi encontrado e nenhum aviso ou preocupação semântica permanece sem solução.
 
 ### REVIEW
-
-Warnings or semantic changes need judgment but are not automatically blocking. Review `number-added`, `number-missing`, and `residual-grew` against the source and context; number spelling changes can be legitimate. Report unavailable or unscored residual analysis as incomplete when that audit was required. This includes a literal validator difference that corresponds to a specifically requested edit of normally protected content: review it against that scope and its remaining data and attribution constraints instead of automatically repairing it back to the original. Explain the exact uncertainty.
+Avisos ou alterações semânticas exigem julgamento, mas não são automaticamente bloqueantes (ex.: `number-added`, `number-missing`, `residual-grew` ou edição autorizada pelo usuário em região normalmente protegida).
 
 ### FAIL
+Conteúdo protegido mudou ou desapareceu. Identifique o responsável correto pelo reparo (`voice-preserving-rewriter` para texto retornado, `file-edit-in-place` para arquivo nomeado) se `pass.index < pass.max`.
 
-Protected content changed or disappeared. Identify the correct repair owner from source kind:
+## Limite de loop de reparo
 
-- returned text -> `voice-preserving-rewriter`
-- named file -> `file-edit-in-place`
+É permitida no máximo uma reentrada de reparo, e somente enquanto o orçamento de edição solicitado tiver espaço. O reparo consome a próxima passagem de edição. A verificação em si não consome uma passagem.
 
-Pass only the blocking repair scope and existing envelope. Do not ask the repair owner to redo clean parts. If `pass.index` has reached `pass.max`, report the unresolved failure instead of requesting another mutation.
+## Saída
 
-## Repair-loop limit
-
-At most one repair re-entry is allowed, and only while the requested editing budget has room. The repair consumes the next editing pass. Verification itself does not consume a pass. After repair, verify once more. If that check still fails, stop and report the unresolved errors. Never cycle indefinitely.
-
-## Output
-
-Return `PASS`, `FAIL`, or `REVIEW`, verifier execution status, blocking preservation errors, warnings, any separate semantic-guard review, the suggested repair owner, and whether the bounded repair opportunity has already been used.
+Retorne `PASS`, `FAIL` ou `REVIEW`, o status de execução do verificador, erros bloqueantes de preservação, avisos, qualquer revisão separada de guarda semântica, o responsável sugerido pelo reparo e se a oportunidade limitada de reparo já foi utilizada.

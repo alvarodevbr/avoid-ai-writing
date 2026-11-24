@@ -1,19 +1,17 @@
-# Proof: this skill's detector, run against this skill's own writing
+# Prova: o detector desta skill executado contra a própria escrita desta skill
 
-A tool that flags "delve" in your draft should survive its own pass. This page
-is the result of running `detector/patterns.js` over the repo's documentation,
-including the findings that are unflattering.
+Uma ferramenta que sinaliza "desbravar" ou "delve" no seu rascunho deve sobreviver à sua própria passagem. Esta página é o resultado da execução de `detector/patterns.js` sobre a documentação do repositório, incluindo os achados que não são lisonjeiros.
 
-Reproduce it in one command, no dependencies:
+Reproduza em um comando, sem dependências:
 
 ```bash
-git clone https://github.com/conorbronsdon/avoid-ai-writing && cd avoid-ai-writing
+git clone https://github.com/alvarodevbr/avoid-ai-writing && cd avoid-ai-writing
 node scripts/self-scan.js
 ```
 
-## Result (v3.34.0, measured 2026-09-13)
+## Resultado (v3.34.0, medido em 2026-09-13)
 
-| Document | Words | Raw score | Exempt score | Budget |
+| Documento | Palavras | Pontuação bruta (Raw) | Pontuação com isenção (Exempt) | Orçamento (Budget) |
 |---|---:|---:|---:|---:|
 | `README.md` | 5,273 | 58 | **1** | 30 |
 | `SKILL.full.md` | 18,136 | 77 | **9** | 25 |
@@ -24,120 +22,40 @@ node scripts/self-scan.js
 | `CHANGELOG.md` | 11,915 | 57 | **34** | 40 |
 | `PROOF.md` | 1,163 | 13 | **12** | 20 |
 
-The `PROOF.md` row is a snapshot and mildly self-referential: editing this page
-changes its own word count and score. CI gates the live number from
-`scripts/self-scan.js`, not the table text, so treat that row as accurate to
-the commit it was written in and run the command for the current value.
+A linha `PROOF.md` é um instantâneo e levemente autorreferencial: editar esta página altera sua própria contagem de palavras e pontuação. A CI valida o número ao vivo a partir de `scripts/self-scan.js`, não do texto da tabela.
 
-Score runs 0 to 100, where 0 is clean. Two columns are published because
-publishing only the flattering one is the behavior this project exists to
-criticize.
+A pontuação vai de 0 a 100, onde 0 é limpo. Duas colunas são publicadas porque publicar apenas a mais favorável é exatamente o comportamento que este projeto existe para criticar.
 
-**Raw** counts every match, including the 112-entry vocabulary table and every
-pattern this repo quotes to warn about it. `SKILL.full.md` scoring 77 raw
-means the catalog contains the words it catalogs. That number is noise, and it
-is here so nobody has to wonder what was suppressed.
+**Raw (Bruta)** conta cada ocorrência, incluindo a tabela de vocabulário de 112 entradas e cada padrão que este repositório cita para alertar sobre ele. `SKILL.full.md` pontuar 77 na bruta significa que o catálogo contém as palavras que cataloga.
 
-**Exempt** applies the self-reference escape hatch that `SKILL.md` has always
-documented in prose: *"quoted examples are exempt from flagging. Text inside
-quotation marks, code blocks, or explicitly marked as illustrative should not
-be rewritten."* Until this scan existed, that rule was an instruction to a
-model and nothing more. `applyExemptions()` in `scripts/self-scan.js` is its
-executable form: it blanks fenced code, inline code, tables, blockquotes, and
-quoted spans, then scores what remains.
+**Exempt (Com isenção)** aplica a válvula de escape de autorreferência que o `SKILL.md` sempre documentou em prosa: *"exemplos citados estão isentos de sinalização. Textos entre aspas, blocos de código ou explicitamente marcados como ilustrativos não devem ser reescritos."* `applyExemptions()` em `scripts/self-scan.js` é a sua forma executável: ela limpa blocos de código cercados, código inline, tabelas, citações em bloco e trechos entre aspas, e então pontua o que resta.
 
-Budgets gate the exempt column in CI. They are regression ceilings set from
-measured values with a few points of headroom, not quality claims, and they
-only move down. Raising one is a decision that belongs in a pull request with
-the new number stated.
+Os orçamentos (*budgets*) controlam a coluna com isenção na CI. Eles são tetos de regressão definidos a partir de valores medidos com alguns pontos de margem.
 
-## What the scan found in our own writing
+## O que a varredura encontrou em nossa própria escrita
 
-Four results worth naming rather than scrubbing.
+Quatro resultados que vale nomear em vez de esconder.
 
-**1. `CHANGELOG.md` scores worst, and roughly half of it is unreachable by the
-exemption.** A changelog announcing a new rule lists the words that rule
-catches, unquoted and comma-separated: *bustling, intricate, ever-evolving,
-daunting, holistic, actionable, impactful, learnings, synergy, interplay*. The
-detector reads a Tier 1 vocabulary run. A reader reads a release note. The
-exemption only reaches quoted or code-fenced text, so this residue stays in the
-number.
+**1. `CHANGELOG.md` tem a pior pontuação, e cerca de metade disso está fora do alcance da isenção.** Um changelog que anuncia uma nova regra lista as palavras que essa regra captura, sem aspas e separadas por vírgula. O detector lê uma sequência de vocabulário do Tier 1. Um leitor lê uma nota de lançamento. A isenção só alcança textos entre aspas ou em blocos de código.
 
-**2. The em-dash rule does not implement its own carve-out for two shapes.**
-`SKILL.md` exempts the list-item separator (`- **Term** — description`) as
-typography rather than prose punctuation, and `detector/patterns.js`
-implements exactly that. It does not exempt two near-identical forms:
+**2. A regra de travessão inicialmente não implementava sua própria exceção para dois formatos.**
+O `SKILL.md` isenta o separador de item de lista (`- **Termo** — descrição`) como tipografia em vez de pontuação de prosa, e `detector/patterns.js` implementa exatamente isso. Em versões anteriores, não isentava dois formatos quase idênticos:
 
-- Keep-a-Changelog version headings: `## [3.21.0] — 2026-07-30`. Thirty-two of
-  them in `CHANGELOG.md`, every one counted as a prose em dash.
-- A bulleted item whose bold lead term carries a parenthetical before the dash:
-  ``- **Lingering-attention claims** (`lingering-attention`) — the share-post
-  frame…``
+- Cabeçalhos de versão do Keep-a-Changelog: `## [3.21.0] — 2026-07-30`.
+- Um item com marcador cujo termo em negrito trazia um parêntese ou código antes do travessão: ``- **Lingering-attention claims** (`lingering-attention`) — the share-post frame…``
 
-Of 137 em dashes in `CHANGELOG.md` at the time of the scan, the detector carved
-out 53 and counted 84. Thirty-three of those 84 were the two shapes above.
+**Corrigido** na [#67](https://github.com/alvarodevbr/avoid-ai-writing/issues/67): ambos os formatos agora são exceções reconhecidas pelo detector.
 
-**Fixed** in [#67](https://github.com/conorbronsdon/avoid-ai-writing/issues/67):
-both shapes are now carve-outs, with fixtures pinning the narrow scope — a prose
-dash inside a heading still counts, because `SKILL.md` applies the em-dash rule
-to headings too. The scan is what surfaced it, which is the argument for having
-the scan.
+**3. Esta página está na tabela e pontua acima de zero pelo motivo que acabou de descrever.** Qualquer menção em itálico sem aspas ou código não entra na máscara de isenção.
 
-**3. This page is in the table, and it scores 12 for the reason it just
-described.** Nearly every hit on `PROOF.md` comes from the italicized list of
-Tier 1 words two paragraphs above. Italics are not an exempt span; quotation
-marks, code, tables, and blockquotes are. The page explaining that release
-notes trip the detector by naming patterns trips the detector by naming
-patterns. One hit was a real one, an "in order to" in the paragraph above the
-table, and it is now "to".
+**4. `README.md` cai drasticamente da pontuação bruta para a isenta.** A maioria dos achados brutos vem do catálogo de padrões e dos exemplos que a página cita para documentação.
 
-**4. `README.md` drops from 58 raw to 1 after exemptions.** Most raw findings
-come from the pattern catalog and examples the page quotes for documentation.
-The remaining exempt findings are one em dash, one formatting signal, and one
-low type-token-ratio signal.
+## O que esta página não afirma
 
-## What this page does not claim
+Uma pontuação baixa significa que o texto não carrega acertos superficiais de padrões. Não significa que a escrita seja boa, nem que seja humana. O detector mede um subconjunto detectável por regex do `SKILL.md` mais alguns sinais estilométricos.
 
-A low score means the text carries no surface pattern hits. It does not mean
-the writing is good, and it does not mean the writing is human. The detector
-measures a regex-detectable subset of `SKILL.md` plus a few stylometric
-signals. Prose can be hollow, structurally uniform, and entirely free of tells.
+Uma taxa de falsos positivos foi medida e está documentada em [`corpus/README.md`](corpus/README.md) contra 875 parágrafos humanos e 779 parágrafos de máquina: com `score >= 5`, 4,2% de FPR (IC 95% 3,1–5,8) contra 7,2% de TPR. O ROC-AUC em nível de parágrafo é 0,501 agrupado — cara ou coroa — e 0,623 em nível de documento. Lido de forma direta, a pontuação composta não consegue separar de forma confiável o texto de máquina do texto humano.
 
-The scan also has a known limitation worth stating: blanking exempt spans
-slightly changes document-level metrics that are computed over the whole text
-(em-dash rate, type-token ratio, bold-phrase count), because the denominator
-shrinks. Vocabulary and phrase categories are unaffected.
+## Na CI
 
-A false-positive rate has been measured, and it is not quoted here as a claim.
-[`corpus/README.md`](corpus/README.md) publishes the legacy-preparation table
-against 875 human and 779 machine paragraphs: at `score >= 5`, 4.2% FPR (95% CI
-3.1–5.8) against 7.2% TPR. Paragraph-level ROC-AUC is 0.501 pooled — a coin flip
-— and 0.623 at document level. The legacy and repaired paths were compared
-with a pinned detector in the immutable [#290 comparison
-evidence](https://github.com/conorbronsdon/avoid-ai-writing/tree/39accce14131723c796ee640d88c3fe1b0223815/corpus/reports/fp-preprocessing-86ef5ab3).
-Read plainly, the composite score cannot reliably separate machine text from
-human text, and no threshold on it buys a useful true-positive rate at a
-tolerable false-positive cost.
-
-Those numbers stay in the corpus write-up rather than becoming a headline
-because they do not clear this repo's own publication gate. The gate requires
-each claim cell to carry n >= 100, a confidence interval, and more than one
-register people actually write in today. The current run satisfies the first
-two and **fails the register test outright**: HC3 is ChatGPT only, RAID is a
-different task shape, and nothing in either is a modern instruction-tuned model
-writing a LinkedIn post. A rate measured on 2022–2024 assistant prose is an
-upper bound on performance against current models, not an estimate of it.
-
-The intake to fix that is open: if a rule fires on writing a person wrote, the
-[false-positive report](https://github.com/conorbronsdon/avoid-ai-writing/issues/new?template=false_positive.yml)
-form collects the shortest text that fires, the register, how the text was
-actually written, and whether it can become a public fixture. Register is the
-field that matters, because false-positive rates are not uniform across blog,
-documentation, academic, and chat prose, and a single number that hides that
-spread would be a worse claim than none.
-
-## In CI
-
-`.github/workflows/detector-test.yml` runs `node scripts/self-scan.js --check`
-on every push that touches the detector or the docs. A document that drifts
-past its budget fails the build.
+`.github/workflows/detector-test.yml` executa `node scripts/self-scan.js --check` em cada push que toca o detector ou a documentação. Um documento que ultrapasse seu orçamento falha o build.

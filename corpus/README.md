@@ -220,7 +220,7 @@ current models, not an estimate of it. Nothing here has seen a 2026 model.
 
 These results used the historical whitespace-flattening preparation path. The
 legacy and repaired paths were compared with a pinned detector in the immutable
-[#290 comparison evidence](https://github.com/conorbronsdon/avoid-ai-writing/tree/39accce14131723c796ee640d88c3fe1b0223815/corpus/reports/fp-preprocessing-86ef5ab3).
+[#290 comparison evidence](https://github.com/alvarodevbr/avoid-ai-writing/tree/39accce14131723c796ee640d88c3fe1b0223815/corpus/reports/fp-preprocessing-86ef5ab3).
 
 875 human paragraphs, 779 machine paragraphs.
 
@@ -383,5 +383,5 @@ repo, and `fp-measure.js` skips it with a note on machines where it is absent.
 The most valuable additions are the ones this corpus is missing: writing from
 after 2010 in the registers people actually run this tool on, with provenance
 someone is willing to attest to. The
-[false-positive report form](https://github.com/conorbronsdon/avoid-ai-writing/issues/new?template=false_positive.yml)
+[false-positive report form](https://github.com/alvarodevbr/avoid-ai-writing/issues/new?template=false_positive.yml)
 is the other intake for exactly that.

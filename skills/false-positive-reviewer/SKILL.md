@@ -2,80 +2,77 @@
 name: false-positive-reviewer
 version: 3.39.1
 license: MIT
-description: Use when a user asks what AI-writing flags mean, whether detector output proves AI authorship, or wants a careful interpretation of possible false positives, especially for academic, hiring, publication, disciplinary, or other consequential decisions.
+description: Use quando um usuário perguntar o que significam as sinalizações de escrita de IA, se a saída do detector prova autoria por IA, ou quiser uma interpretação cuidadosa de possíveis falsos positivos, especialmente para decisões acadêmicas, de contratação, publicação, disciplinares ou outras decisões de grande impacto.
 ---
 
 # False-Positive Reviewer
 
-Interpret AI-writing signals without turning them into an unsupported authorship verdict.
+Interprete sinais de escrita de IA sem transformá-los em um veredito de autoria sem fundamento.
 
-## Authority
+## Autoridade
 
-Use the evidence caveats and pattern guidance in `../avoid-ai-writing/SKILL.md`. The original Skill explicitly treats flags as writing-quality signals, not proof of who or what wrote the text.
+Use as ressalvas de evidência e orientações de padrões em `../avoid-ai-writing/SKILL.md`. A Skill original trata explicitamente as sinalizações como sinais de qualidade de escrita, não como prova de quem ou o que escreveu o texto.
 
-For cross-Skill work, follow `../avoid-ai-writing-router/references/handoff-contract.md` and `../avoid-ai-writing-router/references/skill-graph.json`.
+Para trabalho entre Skills, siga `../avoid-ai-writing-router/references/handoff-contract.md` e `../avoid-ai-writing-router/references/skill-graph.json`.
 
 ## Connection contract
 
-### Incoming
+### Entrada (Incoming)
 
-Accept interpretation work from:
+Aceite trabalho de interpretação vindo de:
 
-- `avoid-ai-writing-router` via `ROUTE` when the user directly asks for an authorship or consequential interpretation.
-- `ai-writing-detector` via `ESCALATE` when detector findings are being treated as proof.
-- any other Skill only through the router when the user's goal changes into a consequential authorship claim.
+- `avoid-ai-writing-router` via `ROUTE` quando o usuário pedir diretamente uma interpretação de autoria ou de decisão de grande impacto.
+- `ai-writing-detector` via `ESCALATE` quando os achados do detector estiverem sendo tratados como prova.
+- qualquer outra Skill apenas através do roteador quando o objetivo do usuário mudar para uma alegação de autoria de grande impacto.
 
-Preserve the distinction between:
+Preserve a distinção entre:
 
-- deterministic detector evidence,
-- model-only editorial observations,
-- contextual facts supplied by the user,
-- evidence not yet available.
+- evidência determinística do detector,
+- observações editoriais apenas do modelo (*model-only*),
+- fatos contextuais fornecidos pelo usuário,
+- evidência ainda não disponível.
 
-### Produce
+### Produção (Produce)
 
-Update the handoff envelope only with interpretation-relevant state:
+Atualize o envelope de handoff apenas com o estado relevante para a interpretação:
 
-- keep `consequential_authorship_claim: true` when applicable,
-- identify what the existing evidence can and cannot establish,
-- list additional evidence that would materially reduce uncertainty,
-- set a router-return reason if the user requests fresh signal collection or changes intent.
+- mantenha `consequential_authorship_claim: true` quando aplicável,
+- identifique o que a evidência existente pode e não pode estabelecer,
+- liste evidências adicionais que reduziriam materialmente a incerteza,
+- defina um motivo de retorno ao roteador se o usuário solicitar nova coleta de sinais ou mudar de intenção.
 
-Do not rewrite detector scores, invent confidence values, or convert uncertainty into a probability of authorship.
+Não reescreva pontuações do detector, não invente valores de confiança nem converta incerteza em probabilidade de autoria.
 
-### Terminal behavior
+### Comportamento terminal (Terminal behavior)
 
 This Skill has no direct outgoing Skill edge.
 
-If fresh signal collection is genuinely needed, return control to `avoid-ai-writing-router` with `fresh_signal_collection_needed`. The router may run `ai-writing-detector` and then route the updated evidence back for interpretation if the user's request still requires it.
+Se uma nova coleta de sinais for genuinamente necessária, return control to `avoid-ai-writing-router` com `fresh_signal_collection_needed`. O roteador pode executar `ai-writing-detector` e então rotear a evidência atualizada de volta para interpretação se o pedido do usuário ainda exigir.
 
-If the user separately asks to rewrite or edit the text, return control to the router with the new intent. Do not jump directly into rewrite or mutation from this Skill.
+Se o usuário pedir separadamente para reescrever ou editar o texto, return control to `avoid-ai-writing-router` com a nova intenção. Não pule diretamente para reescrita ou mutação a partir desta Skill.
 
-This keeps interpretation terminal in the Skill graph and prevents reviewer-detector cycles.
+## Lente de evidência de engenharia de IA
 
-## AI-engineering evidence lens
+Aplique a lente `agency-ai-engineer` codificada em `../avoid-ai-writing-router/references/agency-role-lenses.md`:
 
-Apply the `agency-ai-engineer` lens encoded in `../avoid-ai-writing-router/references/agency-role-lenses.md`:
+- trate a saída do detector como evidência ruidosa em vez de verdade absoluta,
+- leve em conta o modo de contexto, gênero, escrita em segundo idioma, registro técnico, software de edição e estilo de base do autor,
+- separe o comportamento do modelo da atribuição humana,
+- evite falsa precisão,
+- prefira evidências de processo quando a decisão tiver consequências sérias.
 
-- treat detector output as noisy evidence rather than ground truth,
-- account for context mode, genre, second-language writing, technical register, editing software, and baseline writing style,
-- separate model behavior from human attribution,
-- avoid false precision,
-- prefer process evidence when the decision has consequences.
+## Fluxo de trabalho
 
-## Workflow
+1. Identifique quais observações são acertos determinísticos do detector, observações editoriais *model-only* ou fatos contextuais fornecidos pelo usuário.
+2. Explique os sinais mais fortes e as razões humanas plausíveis pelas quais eles podem aparecer.
+3. Considere gênero, escrita em segundo idioma, registro técnico, pressão de prazo, ferramentas de edição, software tipográfico e a linha de base conhecida de quem escreveu.
+4. Para decisões de grande impacto, não transforme uma pontuação ou lista de padrões em uma afirmação definitiva de uso de IA, trapaça, fraude, desonestidade ou adequação.
+5. Sugira evidências mais probatórias para a decisão legítima, como histórico de versões, rascunhos, logs de revisão ou conversa direta com o autor.
 
-1. Identify which observations are deterministic detector hits, model-only editorial observations, or contextual facts supplied by the user.
-2. Explain the strongest signals and plausible human reasons they can appear.
-3. Consider genre, second-language writing, technical register, deadline pressure, editing tools, typography software, and the writer's known baseline when those facts are available.
-4. If an adequate audit is missing and the user wants one, return control to the router with a fresh-signal request. Do not call the detector directly.
-5. For consequential decisions, do not turn a score or pattern list into a definitive claim of AI use, cheating, fraud, dishonesty, or suitability.
-6. Suggest evidence that is more probative for the legitimate decision, such as source history, drafts, revision logs, direct discussion with the writer, or task-specific process evidence.
+## Condições de parada
 
-## Stop conditions
+Pare quando a questão de interpretação for respondida.
 
-Stop when the interpretation question is answered. If more signal collection or a different action is requested, return control to the router rather than opening a direct Skill loop.
+## Saída
 
-## Output
-
-Distinguish what the text actually shows, what it may suggest, what it cannot establish, which evidence came from executed tooling versus model-only review, what additional evidence would reduce uncertainty, and whether control should return to the router for a newly requested stage.
+Distinga o que o texto realmente mostra, o que pode sugerir, o que não pode comprovar, qual evidência veio de ferramentas executadas versus revisão *model-only*, quais evidências adicionais reduziriam a incerteza e se o controle deve retornar ao roteador para uma nova etapa solicitada.

@@ -6,9 +6,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        If you are reporting a **false positive** (the tool flagged human writing), please use the [False positive](https://github.com/conorbronsdon/avoid-ai-writing/issues/new?template=false_positive.yml) form.
+        If you are reporting a **false positive** (the tool flagged human writing), please use the [False positive](https://github.com/alvarodevbr/avoid-ai-writing/issues/new?template=false_positive.yml) form.
 
-        If you are suggesting a **new pattern** to detect, please use the [Pattern proposal](https://github.com/conorbronsdon/avoid-ai-writing/issues/new?template=pattern_proposal.yml) form.
+        If you are suggesting a **new pattern** to detect, please use the [Pattern proposal](https://github.com/alvarodevbr/avoid-ai-writing/issues/new?template=pattern_proposal.yml) form.
 
         Please do not paste anything you would mind seeing in a public repo.
         If the text or log is private, describe the shape and quote the shortest fragment that reproduces the issue.

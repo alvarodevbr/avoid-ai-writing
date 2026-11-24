@@ -1,31 +1,31 @@
 # Cursor Rule — avoid-ai-writing
 
-Drop-in [Cursor](https://cursor.sh) rule that ports the [`avoid-ai-writing`](../SKILL.md) skill to Cursor's `.mdc` rule format, with the same rules, tier vocabulary, context profiles, and detect / rewrite modes. The port ships without the skill's scripts, so three mechanical checks become manual steps the rule reports as unverified: the preservation validator, the `--style` config checker, and the quote-mark normalizer. A `--style` config must be given as a path, since the bundled example configs are not included.
+Regra pronta para o [Cursor](https://cursor.sh) que porta a skill [`avoid-ai-writing`](../SKILL.md) para o formato de regra `.mdc` do Cursor, com as mesmas regras, vocabulário em camadas, perfis de contexto e modos `detect` / `rewrite`, traduzida e adaptada para o Português Brasileiro (PT-BR). O porte é distribuído sem os scripts da skill, portanto três verificações mecânicas tornam-se etapas manuais que a regra relata como não verificadas: o validador de preservação, o verificador de configuração `--style` e o normalizador de aspas.
 
-## Install
+## Instalação
 
-Copy `avoid-ai-writing.mdc` into your project's `.cursor/rules/` directory:
+Copie `avoid-ai-writing.mdc` para o diretório `.cursor/rules/` do seu projeto:
 
 ```sh
 mkdir -p .cursor/rules
 curl -o .cursor/rules/avoid-ai-writing.mdc \
-  https://raw.githubusercontent.com/conorbronsdon/avoid-ai-writing/main/cursor-rules/avoid-ai-writing.mdc
+  https://raw.githubusercontent.com/alvarodevbr/avoid-ai-writing/main/cursor-rules/avoid-ai-writing.mdc
 ```
 
-By default the rule activates on `.md`, `.mdx`, `.txt`, `.rst`, and `.adoc` files (via the `globs` field in the frontmatter). Edit the globs in the rule file if you want it on other file types — or set `alwaysApply: true` if you want it on every Cursor session.
+Por padrão, a regra é ativada em arquivos `.md`, `.mdx`, `.txt`, `.rst` e `.adoc` (via campo `globs` no frontmatter).
 
-## Trigger phrases
+## Frases de gatilho
 
-Once installed, ask Cursor:
-- *"Remove AI-isms from this section."*
-- *"Audit this draft for AI writing patterns."*
-- *"Make this sound less like AI."*
-- *"Run avoid-ai-writing in detect mode."* (flag without rewriting)
+Uma vez instalada, peça ao Cursor:
+- *"Remova os IA-ismos desta seção."* (*"Remove AI-isms from this section."*)
+- *"Audite este rascunho em busca de padrões de escrita de IA."* (*"Audit this draft for AI writing patterns."*)
+- *"Deixe este texto com menos cara de IA."* (*"Make this sound less like AI."*)
+- *"Execute o avoid-ai-writing no modo detect."* (*"Run avoid-ai-writing in detect mode."*)
 
-## Old Cursor projects
+## Projetos antigos do Cursor
 
-If you're on a Cursor version that still uses `.cursorrules` (single file at repo root), you can append `avoid-ai-writing.mdc`'s body (the part below the `---` frontmatter) directly to your existing `.cursorrules` file. Modern Cursor projects should prefer the `.cursor/rules/*.mdc` layout.
+Se você estiver em uma versão do Cursor que ainda usa `.cursorrules` (arquivo único na raiz do repositório), pode anexar o corpo de `avoid-ai-writing.mdc` (a parte abaixo do frontmatter `---`) diretamente ao seu arquivo `.cursorrules` existente.
 
-## Updating
+## Atualização
 
-This file and [`dist/avoid-ai-writing.md`](../dist/avoid-ai-writing.md) are generated from `SKILL.md` plus `references/patterns.md`. Run `bash scripts/sync-cursor-rules.sh` after editing either source. The generator first builds the lossless `SKILL.full.md`, then applies six anchored portability rewrites so copied instructions use manual fallbacks where bundled commands are unavailable. CI regenerates all artifacts and fails on drift. Do not edit generated files.
+Este arquivo e [`dist/avoid-ai-writing.md`](../dist/avoid-ai-writing.md) são gerados a partir de `SKILL.md` mais `references/patterns.md`. Execute `bash scripts/sync-cursor-rules.sh` após editar qualquer uma das fontes. Não edite os arquivos gerados manualmente.

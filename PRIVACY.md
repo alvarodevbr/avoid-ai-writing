@@ -1,13 +1,13 @@
-# Privacy
+# Privacidade (Privacy)
 
-Avoid AI Writing is a skills-only ChatGPT and Codex plugin.
+Avoid AI Writing é um plugin baseado exclusivamente em Skills para ChatGPT e Codex.
 
-The package does not include a developer-hosted server, analytics endpoint, telemetry client, authentication flow, or bundled MCP server. Its packaged detector and preservation validator run locally in the host environment when that environment provides Node execution.
+O pacote não inclui servidor hospedado pelo desenvolvedor, endpoint de análise, cliente de telemetria, fluxo de autenticação ou servidor MCP empacotado. Seu detector e validador de preservação empacotados rodam localmente no ambiente host quando esse ambiente fornece execução em Node.
 
-Text supplied to ChatGPT or Codex is processed by the host product under the user's OpenAI account and applicable OpenAI terms and privacy controls. This repository does not add a separate network destination for that text.
+O texto fornecido ao ChatGPT ou Codex é processado pelo produto host sob a conta OpenAI do usuário e os termos e controles de privacidade aplicáveis da OpenAI. Este repositório não adiciona um destino de rede separado para esse texto.
 
-During plugin operation the developer receives no user text and holds no data about users. The developer collects no personal data through the plugin, uses none, shares none with anyone, and retains none, so there is no developer-side account, setting, or deletion request to make.
+Durante a operação do plugin, o desenvolvedor não recebe nenhum texto do usuário e não mantém dados sobre os usuários. O desenvolvedor não coleta dados pessoais por meio do plugin, não usa nenhum, não compartilha com ninguém e não retém nenhum.
 
-The only data the developer sees is what a person chooses to post in the public GitHub repository, such as an issue or pull request. That shows the poster's GitHub username and whatever they wrote, it is public, and the developer uses it only to maintain the project. GitHub stores it under GitHub's own terms for as long as the repository exists; the developer keeps no separate copies. A poster can edit their own comments and can ask the maintainer to delete an issue or a comment.
+Os únicos dados que o desenvolvedor vê são o que uma pessoa escolhe publicar no repositório público do GitHub, como uma issue ou pull request.
 
-Support and issue reports are handled through the public GitHub repository at https://github.com/conorbronsdon/avoid-ai-writing/issues.
+Suporte e relatos de problemas são tratados por meio do repositório público no GitHub em https://github.com/alvarodevbr/avoid-ai-writing/issues.

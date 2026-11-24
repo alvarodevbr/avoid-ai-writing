@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 SEMVER = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
 FRONTMATTER = re.compile(r"\A---\s*\n(.*?)\n---\s*\n(.*)\Z", re.S)
 TOP_LEVEL_INCLUDE_FILES = ("OPENAI_PLUGIN.md", "NOTICE.md", "PRIVACY.md", "TERMS.md", "SUPPORT.md", "LICENSE")
-CANONICAL_PROJECT_URL = "https://github.com/conorbronsdon/avoid-ai-writing"
+CANONICAL_PROJECT_URL = "https://github.com/alvarodevbr/avoid-ai-writing"
 MAX_SVG_BYTES = 256 * 1024
 YAML_MAPPING = re.compile(r"([A-Za-z_][A-Za-z0-9_-]*):(?:[ 	]+(.*)|$)")
 AGENT_METADATA_KEYS = {

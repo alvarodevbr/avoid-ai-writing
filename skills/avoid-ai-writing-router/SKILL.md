@@ -2,119 +2,76 @@
 name: avoid-ai-writing-router
 version: 3.39.1
 license: MIT
-description: Use when a request combines AI-writing audit, rewrite, file editing, voice preservation, false-positive interpretation, verification, or when the user invokes Avoid AI Writing without naming a mode.
+description: Use quando um pedido combinar auditoria de escrita de IA, reescrita, edição de arquivo, preservação de voz, interpretação de falsos positivos, verificação, ou quando o usuário invocar o Avoid AI Writing sem nomear um modo.
 ---
 
 # Avoid AI Writing Router
 
-Coordinate the public Skills as a bounded workflow. Route to the narrowest owner, preserve context between stages, and stop when the requested job is complete. This Skill does not replace the original `avoid-ai-writing` rulebook.
+Coordene as Skills públicas como um fluxo de trabalho limitado. Roteie para o responsável mais específico, preserve o contexto entre as etapas e pare quando o trabalho solicitado estiver concluído. Esta Skill não substitui o livro de regras original `avoid-ai-writing`.
 
-## Authority chain
+## Cadeia de autoridade
 
-1. `../avoid-ai-writing/SKILL.md` is the canonical editorial authority.
-2. `references/handoff-contract.md` defines what context and evidence can cross Skill boundaries.
-3. `references/skill-graph.json` is the machine-readable source for nodes, typed edges, guards, and loop limits.
-4. `references/routing-matrix.md` is the human-readable routing table.
-5. `references/agency-role-lenses.md` defines the architecture, AI-evidence, implementation, and representation review lenses used to inspect the network.
+1. `../avoid-ai-writing/SKILL.md` é a autoridade editorial canônica.
+2. `references/handoff-contract.md` define qual contexto e evidência podem cruzar as fronteiras entre Skills.
+3. `references/skill-graph.json` é a fonte legível por máquina para nós, arestas tipadas, guardas e limites de loop.
+4. `references/routing-matrix.md` é a tabela de roteamento legível por humanos.
+5. `references/agency-role-lenses.md` define as lentes de revisão de arquitetura, evidência de IA, implementação e representação usadas para inspecionar a rede.
 
-Do not weaken, duplicate, or contradict the canonical Skill's preservation rules, evidence caveats, voice rules, pattern tiers, or pass behavior.
+Não enfraqueça, duplique ou contradiga as regras de preservação, ressalvas de evidência, regras de voz, camadas de padrões ou comportamento de passagens da Skill canônica.
 
-## Orchestration model
+## Modelo de orquestração
 
-Classify the request once, create the smallest useful handoff envelope, then pass that envelope forward rather than asking every downstream Skill to infer the same context again.
+Classifique o pedido uma vez, crie o menor envelope de handoff útil e passe esse envelope adiante em vez de pedir que cada Skill seguinte infira o mesmo contexto novamente.
 
-The envelope should carry only observed or user-provided facts such as:
+Nunca marque um campo de execução como `executed` sem evidência do host.
 
-- intent and source kind
-- requested editing scope and explicit factual corrections
-- canonical context profile and detector context mode
-- requested voice or supplied style sample
-- protected semantic constraints
-- whether detector, mutation, or verifier execution actually ran
-- detector summary when available
-- preservation status when available
-- risk flags
-- editing passes used and stop limit
+## Roteamento primário
 
-Never mark an execution field as `executed` without host evidence.
+1. Pedidos de escanear, detectar, auditar, pontuar ou apenas sinalizar vão para `ai-writing-detector`.
+2. Pedidos de reescrever texto retornado, humanizar, limpar ou remover IA-ismos vão para `voice-preserving-rewriter`.
+3. Um arquivo nomeado mais um pedido explícito para alterar esse arquivo vai para `file-edit-in-place`.
+4. Original mais reescrita, comparação antes/depois ou validação de preservação vai para `preservation-verifier`.
+5. Alegações sobre provar uso de IA, trapaça, fraude, desonestidade, adequação para contratação ou conclusões semelhantes de grande impacto vão para `false-positive-reviewer`.
+6. A invocação explícita da Skill original pode permanecer em `avoid-ai-writing`, a menos que o pedido precise claramente de uma etapa especializada.
 
-## Primary routing
+## Sequenciamento de múltiplas etapas
 
-1. Scan, detect, audit, score, or flag-only requests go to `ai-writing-detector`.
-2. Returned-text rewrite, humanize, clean-up, or remove-AI-isms requests go to `voice-preserving-rewriter`.
-3. A named file plus an explicit request to change that file goes to `file-edit-in-place`.
-4. Original plus rewrite, before/after comparison, or preservation validation goes to `preservation-verifier`.
-5. Claims about proving AI use, cheating, fraud, dishonesty, hiring suitability, or similar consequential conclusions go to `false-positive-reviewer`.
-6. Explicit invocation of the original Skill may remain in `avoid-ai-writing` unless the request clearly needs a specialized stage.
+Para pedidos como "escaneie isso, reescreva e garanta que nada importante mudou":
 
-## Multi-stage sequencing
+1. `ai-writing-detector` coleta sinais quando a execução determinística está disponível; caso contrário, realiza uma auditoria *model-only* sob o livro de regras canônico.
+2. `voice-preserving-rewriter` reescreve o texto retornado, ou `file-edit-in-place` altera um arquivo explicitamente nomeado.
+3. O responsável pela alteração realiza qualquer edição corretiva justificada dentro do orçamento compartilhado de passagens de edição, e então `preservation-verifier` verifica o material antes/depois.
+4. Um `FAIL` do verificador retorna ao responsável pelo reparo correto uma única vez, somente se o orçamento compartilhado tiver espaço; esse reparo consome a próxima passagem de edição.
+5. A verificação roda mais uma vez após o reparo quando possível.
+6. A detecção residual roda apenas quando o usuário solicitou convergência ou auditoria residual.
+7. Pare quando não restar edição justificada no escopo ou após o teto canônico de passagens.
 
-For requests such as "scan this, rewrite it, and make sure nothing important changed":
+## Arestas tipadas
 
-1. `ai-writing-detector` collects signals when deterministic execution is available, otherwise it performs a model-only audit under the canonical rulebook.
-2. `voice-preserving-rewriter` rewrites returned text, or `file-edit-in-place` mutates an explicitly named file.
-3. The mutation owner performs any justified corrective edit within the shared editing-pass budget, then `preservation-verifier` checks before/after material.
-4. A verifier `FAIL` returns to the correct repair owner once only if the shared budget has room; that repair consumes the next editing pass.
-5. Verification runs once more after repair when possible.
-6. Residual detection runs only when the user requested convergence or a residual audit. The check is read-only; a resulting edit still needs room in the shared budget.
-7. Stop when no justified in-scope edit remains or after the canonical pass cap. Do not cycle indefinitely.
+Use a semântica de arestas em `references/handoff-contract.md`:
 
-## Typed edges
+- `ROUTE`: escolhe o responsável.
+- `FEED`: passa evidência sem transformá-la em comando obrigatório.
+- `VERIFY`: exige uma verificação de preservação antes/depois.
+- `REPAIR`: retorna um resultado de preservação que falhou ao responsável correto pela alteração.
+- `RECHECK`: executa uma verificação residual limitada quando solicitada.
+- `ESCALATE`: move interpretação de autoria incerta ou de grande impacto para `false-positive-reviewer`.
 
-Use the edge semantics in `references/handoff-contract.md`:
+## Guarda condicional de representação humana
 
-- `ROUTE`: choose the owner.
-- `FEED`: pass evidence without turning it into a command.
-- `VERIFY`: require a before/after preservation check.
-- `REPAIR`: return a failed preservation result to the correct mutation owner.
-- `RECHECK`: run one bounded residual check when requested.
-- `ESCALATE`: move uncertain or consequential authorship interpretation to `false-positive-reviewer`.
+Se a própria fonte for um prompt de imagem, prompt de vídeo, storyboard, descrição de cena ou briefing criativo que descreva pessoas, defina `human_representation_sensitive: true` e preserve detalhes sensíveis à identidade como restrições protegidas usando a lente `agency-inclusive-visuals-specialist` de `references/agency-role-lenses.md`.
 
-Conditional guards are not graph edges. Encode them in `skill-graph.json` `guards` and the handoff envelope (`protected_constraints`, `human_representation_sensitive`) per `references/handoff-contract.md`.
+## Lentes de revisão
 
-## Conditional human-representation guard
+- `agency-software-architect`: propriedade, direção de dependência, loops limitados, fallback, reversibilidade.
+- `agency-ai-engineer`: semântica do detector, incerteza, tratamento de falsos positivos, propagação de contexto, avaliação.
+- `agency-senior-developer`: caminhos executáveis, propagação de erros, evidência de mutação de arquivo, verificações de CI e desvio.
+- `agency-inclusive-visuals-specialist`: preservação de representação apenas para prompts visuais e briefings envolvendo pessoas.
 
-If the source itself is an image prompt, video prompt, storyboard, shot description, or creative brief that describes people, set `human_representation_sensitive: true` and preserve identity-sensitive details as protected constraints.
+## Condições de parada
 
-Use the `agency-inclusive-visuals-specialist` lens from `references/agency-role-lenses.md` to protect cultural, geographic, age, disability, attire, skin-tone/lighting, and physical-reality details. Do not route ordinary prose to a visual workflow just because it mentions a person.
+Pare quando a etapa solicitada pelo usuário estiver concluída e qualquer gate de verificação exigido tiver passado, sido explicitamente relatado como indisponível ou falhado sem passagem de edição restante para reparo.
 
-## Review lenses
+## Saída
 
-Apply these design checks when the network changes or when a complex request exposes a boundary problem:
-
-- `agency-software-architect`: ownership, dependency direction, bounded loops, fallback, reversibility.
-- `agency-ai-engineer`: detector semantics, uncertainty, false-positive handling, context propagation, evaluation.
-- `agency-senior-developer`: executable paths, error propagation, file mutation evidence, CI and drift checks.
-- `agency-inclusive-visuals-specialist`: representation preservation only for visual prompts and briefs involving people.
-
-These are review lenses, not hidden public dependencies. If an external agency Skill is not available in the current host, apply the encoded lens without claiming it ran.
-
-## Boundary changes
-
-Return control to the router instead of continuing locally when:
-
-- the job changes from read-only to mutation,
-- the target changes from returned text to a named file or the reverse,
-- required before/after evidence is missing,
-- deterministic execution requested by the workflow is unavailable,
-- the user moves from pattern analysis to a consequential authorship claim,
-- a verifier fails and identifies a different repair owner.
-
-Preserve the existing handoff envelope and change only fields affected by the new decision.
-
-## Stop conditions
-
-Stop when the user's requested stage is complete and any required verification gate has passed, been explicitly reported as unavailable, or failed with no editing pass left for repair. Report an exhausted-budget failure without calling the result verified.
-
-Do not:
-
-- infer authorship from detector output,
-- mutate a file without user authorization,
-- hide a verifier failure,
-- re-run stages simply because another Skill exists,
-- exceed the canonical rewrite pass cap,
-- route unrelated writing or coding requests into this Plugin merely because they mention AI.
-
-## Output
-
-Return the selected workflow result only after the requested stages and available verification finish. For returned-text rewriting, include exactly one full Final rewrite; do not expose a draft that a later stage superseded. For named-file editing, report changed spans without dumping a duplicate of the file. For multi-stage work, state which stages actually ran, which were model-only, which deterministic checks executed, how many editing passes were used, whether any repair occurred, and the final preservation status or unresolved failure.
+Retorne o resultado do fluxo de trabalho selecionado apenas após a conclusão das etapas solicitadas e da verificação disponível. Para reescrita de texto retornado, inclua exatamente um **Final rewrite** completo. Para edição de arquivo nomeado, relate os trechos alterados sem despejar uma cópia duplicada do arquivo inteiro.

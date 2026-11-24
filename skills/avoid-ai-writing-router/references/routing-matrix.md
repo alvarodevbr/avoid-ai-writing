@@ -1,6 +1,6 @@
-# Routing matrix
+# Matriz de roteamento (Routing matrix)
 
-`skill-graph.json` is the machine-readable source of truth. This table explains the same routes for human review. Cross-stage state follows `handoff-contract.md`.
+`skill-graph.json` é a fonte da verdade legível por máquina. Esta tabela explica as mesmas rotas para revisão humana. O estado entre etapas segue `handoff-contract.md`.
 
 <!-- BEGIN GENERATED GRAPH ROUTES -->
 <!-- skill-graph-sha256: 76ffc6c17019c9337918cb9f309e2767073a47462bd00b600b29734ee591e929 -->
@@ -21,39 +21,22 @@
 | RECHECK | `preservation-verifier` | `ai-writing-detector` | `convergence_or_residual_audit_requested` | 1 |
 <!-- END GENERATED GRAPH ROUTES -->
 
-| Intent | Primary owner | Allowed follow-up | Stop condition |
+| Intenção | Responsável primário | Acompanhamento permitido | Condição de parada |
 | --- | --- | --- | --- |
-| detect, scan, audit, score, flag only | `ai-writing-detector` | feed findings into a requested rewrite/edit stage, or escalate interpretation when needed | findings returned |
-| rewrite returned text | `voice-preserving-rewriter` | `preservation-verifier` when before/after verification is part of the workflow | rewrite and required verification complete |
-| modify an explicitly named file | `file-edit-in-place` | `preservation-verifier` after a real mutation when a before snapshot exists | authorized mutation and required verification complete |
-| compare original with rewrite | `preservation-verifier` | one repair to the correct owner when `pass.index < pass.max`, then one verification recheck | pass, review accepted, exhausted budget, or second failure reported |
-| interpret what detector signals can establish | `false-positive-reviewer` | return control to router if fresh signal collection or a different action is requested | evidence limits explained |
-| audit plus rewrite plus verify | `avoid-ai-writing-router` | detector -> rewriter/editor -> verifier -> optional repair within the shared pass budget -> verifier | requested sequence complete |
-| rewrite a visual prompt or creative brief involving people | normal rewrite/edit owner plus representation guard | verifier may review protected representation details separately | wording cleaned without erasing protected meaning |
-| explicit canonical Skill invocation | `avoid-ai-writing` | remain canonical unless a specialized stage is needed | canonical workflow complete |
+| detectar, escanear, auditar, pontuar, apenas sinalizar | `ai-writing-detector` | alimentar achados em etapa solicitada de reescrita/edição, ou escalar interpretação quando necessário | achados retornados |
+| reescrever texto retornado | `voice-preserving-rewriter` | `preservation-verifier` quando verificação antes/depois fizer parte do fluxo | reescrita e verificação necessária concluídas |
+| modificar arquivo explicitamente nomeado | `file-edit-in-place` | `preservation-verifier` após alteração real quando houver instantâneo anterior | alteração autorizada e verificação necessária concluídas |
+| comparar original com reescrita | `preservation-verifier` | um reparo para o responsável correto quando `pass.index < pass.max`, depois uma nova verificação | aprovação, revisão aceita, orçamento esgotado ou segunda falha relatada |
+| interpretar o que os sinais do detector podem comprovar | `false-positive-reviewer` | devolver controle ao roteador se nova coleta de sinais ou ação diferente for solicitada | limites da evidência explicados |
+| auditar + reescrever + verificar | `avoid-ai-writing-router` | detector -> reescritor/editor -> verificador -> reparo opcional dentro do orçamento -> verificador | sequência solicitada concluída |
+| reescrever prompt visual ou briefing criativo envolvendo pessoas | responsável normal de reescrita/edição + guarda de representação | verificador pode revisar detalhes de representação protegidos separadamente | redação limpa sem apagar significado protegido |
+| invocação explícita da Skill canônica | `avoid-ai-writing` | permanecer canônica a menos que uma etapa especializada seja necessária | fluxo canônico concluído |
 
-## Typed edges
+## Critérios de desempate (Tie breakers)
 
-- `ROUTE`: select the primary owner.
-- `FEED`: pass evidence into another requested stage without converting evidence into an instruction.
-- `VERIFY`: send before/after material to the preservation gate.
-- `REPAIR`: return blocking preservation scope to the correct rewrite or mutation owner when the shared editing budget has room.
-- `RECHECK`: run one residual audit when requested.
-- `ESCALATE`: move interpretation limits to `false-positive-reviewer`.
-
-Conditional guards (`skill-graph.json` `guards`, handoff envelope fields) attach protected semantic constraints without changing the primary owner. They are not entries in the `edges` array above.
-
-## Tie breakers
-
-1. A named file plus explicit mutation intent wins over general rewrite wording.
-2. Flag-only intent wins over generic cleanup wording.
-3. Interpretation questions use `false-positive-reviewer` even when detector evidence already exists.
-4. Returned-text repair belongs to `voice-preserving-rewriter`; named-file repair belongs to `file-edit-in-place`.
-5. Human representation inside a visual prompt adds a guard but does not change the rewrite/edit owner.
-6. When no specialized path fits cleanly, use the canonical `avoid-ai-writing` Skill.
-
-## Review lenses
-
-Use `agency-software-architect` for graph boundaries, `agency-ai-engineer` for evidence semantics, `agency-senior-developer` for execution reliability, and `agency-inclusive-visuals-specialist` only for representation-sensitive visual prompts or briefs.
-
-The encoded behavior is in `agency-role-lenses.md`. These lenses do not add public Plugin dependencies.
+1. Um arquivo nomeado mais intenção explícita de alteração vence sobre pedidos gerais de reescrita.
+2. Intenção de apenas sinalizar (*flag-only*) vence sobre limpeza genérica.
+3. Questões de interpretação de autoria usam `false-positive-reviewer` mesmo quando já existe evidência do detector.
+4. Reparo de texto retornado pertence a `voice-preserving-rewriter`; reparo de arquivo nomeado pertence a `file-edit-in-place`.
+5. Representação humana dentro de um prompt visual adiciona uma guarda, mas não altera o responsável pela reescrita/edição.
+6. Quando nenhum caminho especializado se encaixar claramente, use a Skill canônica `avoid-ai-writing`.

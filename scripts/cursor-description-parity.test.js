@@ -24,7 +24,7 @@ function frontmatterDescription(file) {
 
 function expectedCursorDescription(skillFile) {
   const version = read(skillFile).match(/^version: (.+)$/m)[1].trim();
-  return `${frontmatterDescription(skillFile)}${CURSOR_SUFFIX}${version}. See https://github.com/conorbronsdon/avoid-ai-writing.`;
+  return `${frontmatterDescription(skillFile)}${CURSOR_SUFFIX}${version}. See https://github.com/alvarodevbr/avoid-ai-writing.`;
 }
 
 // The committed rule matches what SKILL.md implies.

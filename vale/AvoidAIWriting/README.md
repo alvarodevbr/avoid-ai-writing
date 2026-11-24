@@ -1,7 +1,7 @@
 # AvoidAIWriting for Vale
 
 A [Vale](https://vale.sh) style generated from the regex-detectable rules in
-[avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing). It is built by
+[avoid-ai-writing](https://github.com/alvarodevbr/avoid-ai-writing). It is built by
 `scripts/build-vale.js` from `detector/patterns.js`, so the tokens here are the detector's
 tokens. Do not edit these files by hand.
 
@@ -28,7 +28,7 @@ detector. They do not transfer to this style until measured on it. See
 ## Use
 
 Place the AvoidAIWriting directory at `styles/AvoidAIWriting/` in your project.
-Get it from the [repository](https://github.com/conorbronsdon/avoid-ai-writing/tree/main/vale/AvoidAIWriting).
+Get it from the [repository](https://github.com/alvarodevbr/avoid-ai-writing/tree/main/vale/AvoidAIWriting).
 This style requires Vale 3.24.0 or newer. Then configure Vale:
 
 ```ini

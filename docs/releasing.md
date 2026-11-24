@@ -1,21 +1,11 @@
-# Release recovery
+# Recuperação de lançamento (Release recovery)
 
-The release workflow runs only after a version change reaches `main`. Its
-read-only preflight checks the version agreement, test suite, and npm package
-payload before either publishing job receives write authority.
+O fluxo de trabalho de release roda apenas depois que uma alteração de versão chega à branch `main`. Sua verificação prévia (*preflight*) somente leitura checa a concordância de versão, a suíte de testes e o pacote npm antes que qualquer job de publicação receba permissão de escrita.
 
-GitHub serializes release runs. Keep `queue: max`: `cancel-in-progress: false`
-protects the running job but does not retain more than one pending run by
-itself.
+O GitHub serializa as execuções de release. Mantenha `queue: max`: `cancel-in-progress: false` protege o job em execução, mas não retém mais de uma execução pendente por si só.
 
-## Recover a failed npm publication
+## Recuperar uma publicação npm que falhou
 
-If the GitHub release exists but npm publication fails, rerun the failed jobs
-from the original workflow run. A rerun keeps the original commit SHA, sees the
-existing GitHub release, verifies that its tag still names that SHA, and retries
-only the missing npm version. Do not merge another version bump as a recovery
-mechanism, move the release tag, or reuse a version that reached the registry.
+Se o release do GitHub existir, mas a publicação no npm falhar, execute novamente (*rerun*) os jobs que falharam a partir da execução original do workflow. Uma nova execução mantém o commit SHA original, vê o release existente do GitHub, verifica se a tag ainda aponta para aquele SHA e tenta novamente apenas a versão ausente no npm. Não faça merge de outro aumento de versão como mecanismo de recuperação, não mova a tag de release nem reutilize uma versão que já chegou ao registro.
 
-If preflight fails, no release or package exists. Fix the failure through a new
-pull request, keep the intended version unchanged, then manually dispatch the
-release workflow from `main`. The release environment rejects another ref.
+Se o *preflight* falhar, nenhum release ou pacote foi criado. Corrija a falha por meio de um novo pull request, mantenha a versão pretendida inalterada e dispare manualmente o workflow de release a partir da `main`.

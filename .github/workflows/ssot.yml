@@ -19,7 +19,7 @@ jobs:
       - name: Get the reviewed checker
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: conorbronsdon/ssot-check
+          repository: alvarodevbr/ssot-check
           ref: f779e946969917fa9a5e9fca2f3c600c083c9c08 # v0.3.0: check --strict
           path: .ssot-tool
           persist-credentials: false

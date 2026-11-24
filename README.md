@@ -2,76 +2,76 @@
 
 # avoid-ai-writing
 
-Audit & rewrite content to remove AI writing patterns. A practical skill for any AI agent. Supports detect-only and edit-in-place modes, plus voice profiles.
+Audite e reescreva conteúdos para remover padrões de escrita de IA ("IA-ismos"). Uma skill prática para qualquer agente de IA, adaptada para o Português Brasileiro (PT-BR) e inglês. Suporta modos somente detecção e edição local em arquivos, além de perfis de voz.
 
-[![GitHub stars](https://img.shields.io/github/stars/conorbronsdon/avoid-ai-writing?style=social)](https://github.com/conorbronsdon/avoid-ai-writing/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/alvarodevbr/avoid-ai-writing?style=social)](https://github.com/alvarodevbr/avoid-ai-writing/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/avoid-ai-writing-detector.svg)](https://www.npmjs.com/package/avoid-ai-writing-detector)
-[![detector](https://github.com/conorbronsdon/avoid-ai-writing/actions/workflows/detector-test.yml/badge.svg)](https://github.com/conorbronsdon/avoid-ai-writing/actions/workflows/detector-test.yml)
+[![detector](https://github.com/alvarodevbr/avoid-ai-writing/actions/workflows/detector-test.yml/badge.svg)](https://github.com/alvarodevbr/avoid-ai-writing/actions/workflows/detector-test.yml)
 [![Podcast](https://img.shields.io/badge/Podcast-Chain_of_Thought-purple?style=flat-square)](https://chainofthought.show/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing)
-[![X](https://img.shields.io/badge/X-@ConorBronsdon-black?style=flat-square&logo=x)](https://x.com/ConorBronsdon)
+[![X](https://img.shields.io/badge/X-@alvarodevbr-black?style=flat-square&logo=x)](https://x.com/alvarodevbr)
 
-<img src="docs/demo.gif" alt="The bundled detector engine flagging 13 AI-writing patterns by category in a sample paragraph, then scoring the clean rewrite 0/100" width="800">
+<img src="docs/demo.gif" alt="O motor detector empacotado sinalizando 13 padrões de escrita de IA por categoria em um parágrafo de exemplo e pontuando a reescrita limpa com 0/100" width="800">
 </div>
 
 ---
 
 
-A portable writing skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), Codex,  [OpenClaw](https://github.com/openclaw/openclaw), [Hermes](https://github.com/NousResearch/hermes-agent), and any other [agentskills.io](https://agentskills.io)-compatible agent. Audits and rewrites content to remove AI writing patterns ("AI-isms").
+Uma skill de escrita portátil para [Claude Code](https://docs.anthropic.com/en/docs/claude-code), Codex, [OpenClaw](https://github.com/openclaw/openclaw), [Hermes](https://github.com/NousResearch/hermes-agent) e qualquer outro agente compatível com [agentskills.io](https://agentskills.io). Audita e reescreve conteúdos para remover padrões de escrita de IA ("IA-ismos" / "AI-isms").
 
-The rules and bundled detector are calibrated for English. See [community language adaptations](#community--multilingual) for independently maintained versions in other languages.
+As regras e o detector empacotado foram traduzidos e adaptados para os padrões idiomáticos do **Português Brasileiro (PT-BR)**, mantendo compatibilidade bilíngue com o inglês. Veja [adaptações de idiomas da comunidade](#community--multilingual) para versões mantidas de forma independente em outros idiomas.
 
-**Three modes:**
-- **Rewrite** (default) — flags AI patterns, applies up to two editing passes, verifies the result when possible, and returns one final version.
-- **Detect** — flags AI patterns without rewriting. Shows which flags are real problems vs. judgment calls. Useful when patterns might be intentional, when auditing content you don't want altered, or when you just want a quick scan.
-- **Edit** — edits a prose file in place (via the Edit tool) with minimal, targeted changes, preserving passages that are already human. Source code, configuration, and generated data are refused because prose rewrites can corrupt structured content. Returns an edits-made + verification report, not the full file.
+**Três modos:**
+- **Rewrite** (padrão) — sinaliza padrões de IA, aplica até duas passagens de edição, verifica o resultado quando possível e retorna uma versão final única.
+- **Detect** — sinaliza padrões de IA sem reescrever. Mostra quais alertas são problemas reais vs. questões de julgamento. Útil quando os padrões podem ser intencionais, ao auditar conteúdo que você não quer alterar ou quando quer apenas uma varredura rápida.
+- **Edit** — edita um arquivo de prosa diretamente no local (via ferramenta Edit) com alterações mínimas e direcionadas, preservando passagens que já soam humanas. Código-fonte, configuração e dados gerados são recusados porque reescritas de prosa podem corromper conteúdo estruturado. Retorna um relatório de edições feitas + verificação, não o arquivo inteiro.
 
-Use `--iterate 1|2` to set the editing-pass ceiling. `--iterate 1` allows the initial rewrite only. `--iterate 2` uses the default maximum of an initial rewrite plus one correction or preservation repair, and stops early when no justified in-scope edit remains. Checks do not consume a pass, but any change they prompt does. The skill reports how many editing passes it used and any intentional, protected, or unresolved finding.
+Use `--iterate 1|2` para definir o teto de passagens de edição. `--iterate 1` permite apenas a reescrita inicial. `--iterate 2` usa o máximo padrão de uma reescrita inicial mais uma correção ou reparo de preservação, parando antes quando não restar edição justificada no escopo. As verificações não consomem uma passagem, mas qualquer alteração motivada por elas consome. A skill informa quantas passagens de edição usou e qualquer achado intencional, protegido ou não resolvido.
 
-An optional **voice profile** (casual / professional / technical / warm / blunt) sets how the prose should sound, independent of the audience context profile.
+Um **perfil de voz** opcional (`casual` / `professional` / `technical` / `warm` / `blunt`) define como a prosa deve soar, independentemente do perfil de contexto do público.
 
-The [glossary](GLOSSARY.md) defines the terms these docs use: word tiers, severity tiers, modes, profiles, and detector options.
+O [glossário](GLOSSARY.md) define os termos usados nesta documentação: camadas de vocabulário, níveis de gravidade, modos, perfis e opções do detector.
 
-## Table of contents
+## Sumário
 - [Quick demo](#quick-demo)
-- [Why a skill, not just a prompt](#why-a-skill-not-just-a-prompt)
+- [Por que uma skill, não apenas um prompt](#por-que-uma-skill-não-apenas-um-prompt)
 - [Installation & Usage](#installation--usage)
-    * [Install the complete skill directory](#install-the-complete-skill-directory)
+    * [Instalar o diretório completo da skill](#instalar-o-diretório-completo-da-skill)
     * [Claude Code](#claude-code)
-    * [Claude Cowork — install as a plugin](#claude-cowork--install-as-a-plugin)
+    * [Claude Cowork — instalar como plugin](#claude-cowork--instalar-como-plugin)
     * [Google Antigravity](#google-antigravity)
     * [OpenClaw](#openclaw)
     * [Cursor](#cursor)
     * [Hermes](#hermes)
     * [OpenAI Codex](#openai-codex)
-    * [Native ChatGPT and Codex plugin package](#native-chatgpt-and-codex-plugin-package)
+    * [Pacote nativo de plugin para ChatGPT e Codex](#pacote-nativo-de-plugin-para-chatgpt-e-codex)
     * [Other agents](#other-agents)
-    * [Triggering the skill](#triggering-the-skill)
-- [Pattern reference](#pattern-reference)
-    * [Content Patterns](#content-patterns)
-    * [Language Patterns](#language-patterns)
-    * [Structure Patterns](#structure-patterns)
-    * [Communication Patterns](#communication-patterns)
-    * [Meta Patterns](#meta-patterns)
-    * [Structural Detection (v3.4)](#structural-detection-v34)
-    * [AI-tool fingerprints & later additions (v3.5–3.8)](#ai-tool-fingerprints--later-additions-v3538)
-    * [Conversational-register patterns (v3.15)](#conversational-register-patterns-v315)
-    * [Share-post framing (v3.20)](#share-post-framing-v320)
-    * [Narrated candor (v3.21)](#narrated-candor-v321)
-    * [Unnecessary hyphenation (v3.24)](#unnecessary-hyphenation-v324)
-- [Full Example](#full-example)
-- [Run the detector](#run-the-detector)
-    * [Score a file or piped text from the command line](#score-a-file-or-piped-text-from-the-command-line)
-    * [Gate prose in GitHub Actions or pre-commit](#gate-prose-in-github-actions-or-pre-commit)
-    * [Use the detector over MCP](#use-the-detector-over-mcp)
-- [Pre-publish pipeline](#pre-publish-pipeline)
+    * [Acionando a skill](#acionando-a-skill)
+- [Referência de padrões](#referência-de-padrões)
+    * [Padrões de Conteúdo](#padrões-de-conteúdo)
+    * [Padrões de Linguagem](#padrões-de-linguagem)
+    * [Padrões de Estrutura](#padrões-de-estrutura)
+    * [Padrões de Comunicação](#padrões-de-comunicação)
+    * [Metapadrões](#metapadrões)
+    * [Detecção Estrutural (v3.4)](#detecção-estrutural-v34)
+    * [Impressões digitais de ferramentas de IA e adições posteriores (v3.5–3.8)](#impressões-digitais-de-ferramentas-de-ia-e-adições-posteriores-v3538)
+    * [Padrões de registro conversacional (v3.15)](#padrões-de-registro-conversacional-v315)
+    * [Molduras de posts de compartilhamento (v3.20)](#molduras-de-posts-de-compartilhamento-v320)
+    * [Franqueza narrada (v3.21)](#franqueza-narrada-v321)
+    * [Hifenização desnecessária (v3.24)](#hifenização-desnecessária-v324)
+- [Exemplo Completo (PT-BR)](#exemplo-completo-pt-br)
+- [Executando o detector](#executando-o-detector)
+    * [Pontuar um arquivo ou texto via pipe na linha de comando](#pontuar-um-arquivo-ou-texto-via-pipe-na-linha-de-comando)
+    * [Validar prosa no GitHub Actions ou pre-commit](#validar-prosa-no-github-actions-ou-pre-commit)
+    * [Usar o detector via MCP](#usar-o-detector-via-mcp)
+- [Pipeline de pré-publicação](#pipeline-de-pré-publicação)
 - [House style is a different job](#house-style-is-a-different-job)
-- [More from me](#more-from-me)
-- [Credits](#credits)
+- [Mais projetos](#mais-projetos)
+- [Créditos](#créditos)
 - [Community / Multilingual](#community--multilingual)
-- [Official sources and sponsorship](#official-sources-and-sponsorship)
-- [Disclaimer](#disclaimer)
-- [License](#license)
+- [Fontes oficiais e patrocínio](#fontes-oficiais-e-patrocínio)
+- [Aviso legal](#aviso-legal)
+- [Licença](#licença)
 
 ## Quick demo
 
@@ -81,167 +81,143 @@ The [glossary](GLOSSARY.md) defines the terms these docs use: word tiers, severi
 **Final rewrite:**
 > Acme Analytics, a Boulder-based startup, raised a $40M Series B. Its observability platform has real-time dashboards, runs queries in under a second, and includes an integration layer.
 
-**Verification:** One editing pass. Review found no further justified in-scope edit; no deterministic preservation check ran in this prose-only demo.
+*(Equivalente em PT-BR: "A Acme Analytics, startup de Boulder, captou US$ 40 milhões na Série B. Sua plataforma de observabilidade tem painéis em tempo real, executa consultas em menos de um segundo e inclui uma camada de integração.")*
 
-**What it caught:** the chatbot opener ("Certainly!"), promotional modifiers, inflated significance, roundabout verbs, vague attribution, and the generic conclusion. The rewrite keeps the funding, location, and three product capabilities. It removes the unsupported market prediction without inventing an investor or an integration mechanism.
+**Verification:** Uma passagem de edição. A revisão não encontrou outra edição justificada no escopo; nenhuma verificação determinística de preservação rodou nesta demonstração somente de prosa.
 
-## Why a skill, not just a prompt
+**O que foi capturado:** a abertura de chatbot ("Certainly!" / "Certamente!"), modificadores promocionais ("vibrante", "aninhada no coração de"), importância inflada ("marco divisor de águas"), verbos indiretos ("serve como", "conta com", "ostenta"), atribuição vaga ("especialistas acreditam") e a conclusão genérica ("o futuro parece brilhante!"). A reescrita mantém a captação, a localização e as três capacidades do produto, removendo a previsão de mercado sem suporte e sem inventar um investidor ou mecanismo de integração.
 
-A one-shot "make this sound human" prompt catches the obvious stuff. This skill is different:
+## Por que uma skill, não apenas um prompt
 
-- **Single final rewrite** — completes its audit, correction, and available verification before returning one full version. A short change summary follows when useful; a detailed audit remains available on request without adding a competing draft.
-- **Two-pass editing** — review can catch patterns that survive the first edit, while one shared limit covers both corrective edits and preservation repairs.
-- **Surface-aware delivery** — checks how the destination renders single newlines before returning prose, unwraps accidental hard-wrapped paragraphs only when those breaks would show, and preserves intentional structure such as lists, poetry, code, and addresses.
-- **112-entry word replacement table across 3 tiers + 10 Tier 3 phrases** — not vibes-based. Every flagged word has a specific, plainer alternative. "Leverage" → "use." "Commence" → "start." Tier 1 matches flag unless a listed exception applies, Tier 2 words flag when they cluster, Tier 3 words flag only at high density. Tier 1 itself splits into **1A frequency markers** (`delve`, `tapestry`) and **1B clarity edits** (`in order to`, `utilize`) — same fix, but only 1A is evidence about how a passage was produced, and 1B is weighted lower so a wordiness fix cannot push a document toward an AI classification. Tier 3 *phrases* (multi-word boilerplate like "the integration of," "decentralized compute") flag on per-phrase repetition or when 3+ distinct phrases stack in one piece — the LLM-self-varies-boilerplate shape.
-- **74 pattern categories** — representative examples below, each with before/after. Includes structural detection (hashtag stuffing, bare-NP bullet lists, hedge-stacked predictions), AI-tool fingerprints (placeholders, citation markup, UTM params), rhythm/uniformity checks, conversational-register tells, and writer-side tests. The full catalog lives in [`references/patterns.md`](./references/patterns.md); this count is enforced against it in CI.
-- **Detect mode** — flag patterns without rewriting. See which flags are real problems vs. judgment calls. Useful when patterns might be intentional or you're auditing content you don't want altered.
-- **Works across platforms** — a directory-based skill runs in Claude Code, Cowork (as a plugin), Google Antigravity (as a plugin), OpenClaw, Cursor (as a ported rule), and other directory-aware agents. See the install paths below.
+Um prompt único do tipo "faça isso soar humano" pega apenas o óbvio. Esta skill é diferente:
+
+- **Reescrita final única** — conclui sua auditoria, correção e verificação disponível antes de retornar uma versão completa. Um breve resumo das alterações segue quando útil; uma auditoria detalhada permanece disponível mediante solicitação sem adicionar um rascunho concorrente.
+- **Edição em duas passagens** — a revisão pode capturar padrões que sobrevivem à primeira edição, enquanto um limite compartilhado cobre tanto edições corretivas quanto reparos de preservação.
+- **Entrega consciente da superfície** — verifica como o destino renderiza quebras de linha simples antes de retornar a prosa, desfazendo quebras de linha forçadas acidentais apenas quando elas ficariam visíveis, e preserva estruturas intencionais como listas, poesia, código e endereços.
+- **112-entry word replacement table across 3 tiers + 10 Tier 3 phrases** — não baseada em "vibes". Cada palavra sinalizada tem uma alternativa específica e mais direta. "Alavancar" (`leverage`) → "usar" (`use`). "Utilizar" (`utilize`) → "usar" (`use`). Ocorrências do Tier 1 são sinalizadas a menos que uma exceção listada se aplique, palavras do Tier 2 são sinalizadas quando se agrupam no mesmo parágrafo, e palavras do Tier 3 são sinalizadas apenas em alta densidade. O Tier 1 se divide em **marcadores de frequência 1A** (`delve`/`desbravar`, `tapestry`/`tapeçaria`) e **edições de clareza 1B** (`in order to`/`a fim de`, `utilize`/`utilizar`) — mesmo conserto, mas apenas 1A é evidência sobre como uma passagem foi produzida, e 1B tem peso menor para que uma correção de prolixidade não empurre um documento para uma classificação de IA. As *frases* do Tier 3 (clichês de várias palavras como "a integração de", "computação descentralizada") são sinalizadas por repetição ou quando 3+ frases distintas se acumulam no mesmo texto.
+- **74 pattern categories** — exemplos representativos abaixo, cada um com antes/depois. Inclui detecção estrutural (excesso de hashtags, listas de tópicos com sintagmas nominais puros, previsões com acúmulo de ressalvas), impressões digitais de ferramentas de IA (placeholders, marcação de citação, parâmetros UTM), verificações de ritmo/uniformidade, sinais de registro conversacional e testes do lado do autor. O catálogo completo vive em [`references/patterns.md`](./references/patterns.md); essa contagem é verificada na CI.
+- **Modo Detect** — sinaliza padrões sem reescrever. Veja quais alertas são problemas reais vs. questões de julgamento.
+- **Funciona em várias plataformas** — uma skill baseada em diretório roda no Claude Code, Cowork (como plugin), Google Antigravity (como plugin), OpenClaw, Cursor (como regra portada) e outros agentes. Veja os caminhos de instalação abaixo.
 
 ## Installation & Usage
 
-### Install the complete skill directory
+### Instalar o diretório completo da skill
 
-Use the plugin install below or clone the repository into your agent's skills directory. Keep `SKILL.md` with `references/patterns.md`: the entry file loads the catalog before auditing. The bundled `scripts/`, `detector/`, and `examples/` provide optional mechanical verification.
+Use a instalação via plugin abaixo ou clone o repositório no diretório de skills do seu agente. Mantenha `SKILL.md` junto com `references/patterns.md`: o arquivo de entrada carrega o catálogo antes de auditar. Os diretórios `scripts/`, `detector/` e `examples/` fornecem verificação mecânica opcional.
 
-For a single-file rules field, use [`dist/avoid-ai-writing.md`](./dist/avoid-ai-writing.md) (roughly 150 KB; measure it with `wc -c`). It includes every rule and profile, with manual fallbacks for commands unavailable outside the bundle. Some rules and instructions fields hold far less than that, so check the size limits under [Other agents](#other-agents) before pasting. Do not copy the slim entry file alone. Older installers that fetch only root `SKILL.md` omit its required reference; use a directory install instead.
+Para um campo de regras de arquivo único, use [`dist/avoid-ai-writing.md`](./dist/avoid-ai-writing.md) (aproximadamente 150 KB; meça com `wc -c`). Ele inclui todas as regras e perfis, com alternativas manuais para comandos indisponíveis fora do pacote. Alguns campos de regras e instruções comportam muito menos do que isso, portanto verifique os limites de tamanho em [Other agents](#other-agents) antes de colar. Não copie apenas o arquivo `SKILL.md` enxuto sozinho.
 
 ### Claude Code
 
-**Option 1: Clone into skills directory**
+**Opção 1: Clonar no diretório de skills**
 
 ```bash
-git clone https://github.com/conorbronsdon/avoid-ai-writing ~/.claude/skills/avoid-ai-writing
+git clone https://github.com/alvarodevbr/avoid-ai-writing ~/.claude/skills/avoid-ai-writing
 ```
 
-Then invoke it with `/avoid-ai-writing <your text>`.
+Depois invoque com `/avoid-ai-writing <seu texto>`.
 
-**Option 2: Copy a self-contained file**
+**Opção 2: Copiar um arquivo autossuficiente**
 
-Download `dist/avoid-ai-writing.md` and place it in any directory that Claude Code can read. Reference it in your `CLAUDE.md`:
+Baixe `dist/avoid-ai-writing.md` e coloque-o em qualquer diretório que o Claude Code possa ler. Referencie-o no seu `CLAUDE.md`:
 
 ```markdown
-- Editing for AI patterns → read `path/to/avoid-ai-writing.md`
+- Edição para padrões de IA → leia `caminho/para/avoid-ai-writing.md`
 ```
 
-**Option 3: Use as a slash command**
+**Opção 3: Usar como slash command**
 
-Optional alias. Claude Code names a command after its file, so use a different name from `avoid-ai-writing`. If you've done Option 1, the skill already answers to `/avoid-ai-writing` and a command file with the same name would collide with it. Create a command file (e.g., `~/.claude/commands/clean-ai-writing.md`):
+Alias opcional. Crie um arquivo de comando (ex.: `~/.claude/commands/clean-ai-writing.md`):
 
 ```markdown
 ---
-description: Audit and rewrite content to remove AI writing patterns
+description: Auditar e reescrever conteúdo para remover padrões de escrita de IA
 ---
 
 $ARGUMENTS
 
-Read and follow the instructions in ~/.claude/skills/avoid-ai-writing/SKILL.md
+Leia e siga as instruções em ~/.claude/skills/avoid-ai-writing/SKILL.md
 ```
 
-Then use `/clean-ai-writing <your text>` in Claude Code.
+Depois use `/clean-ai-writing <seu texto>` no Claude Code.
 
-### Claude Cowork — install as a plugin
+### Claude Cowork — instalar como plugin
 
-[Cowork](https://claude.com/product/cowork) loads skills only from **installed plugins** — it doesn't scan `~/.claude/skills/`, so a bare clone (the Claude Code steps above) won't be discovered there. This repo doubles as a single-plugin [marketplace](https://code.claude.com/docs/en/plugin-marketplaces), so install it as a plugin instead:
+O [Cowork](https://claude.com/product/cowork) carrega skills apenas de **plugins instalados**. Este repositório funciona como um [marketplace](https://code.claude.com/docs/en/plugin-marketplaces) de plugin único:
 
 ```bash
-/plugin marketplace add conorbronsdon/avoid-ai-writing
-/plugin install avoid-ai-writing@conorbronsdon-skills
-/reload-plugins   # or restart the session, to activate the skill
+/plugin marketplace add alvarodevbr/avoid-ai-writing
+/plugin install avoid-ai-writing@alvarodevbr-skills
+/reload-plugins   # ou reinicie a sessão para ativar a skill
 ```
-
-In the Cowork desktop app, do the same from **Customize → Plugins → Add marketplace from GitHub** (`conorbronsdon/avoid-ai-writing`), then install **avoid-ai-writing**. The skill auto-triggers from phrases like "remove AI-isms." New releases arrive when the plugin's version is bumped — run `/plugin marketplace update` to pull them.
-
-The same plugin install works in Claude Code if you'd rather have a versioned, updatable plugin than the file clone above.
-
-> Prefer not to install a plugin? Copy `dist/avoid-ai-writing.md` into a folder connected to your Cowork session and tell the agent to follow `./avoid-ai-writing.md` — works as a one-off, no auto-trigger.
 
 ### Google Antigravity
 
-With the [Antigravity CLI](https://antigravity.google/docs/plugins?tab=cli)
-installed, clone this repository and install its bundled plugin directory:
+Com a [Antigravity CLI](https://antigravity.google/docs/plugins?tab=cli) instalada, clone este repositório e instale o diretório do plugin empacotado:
 
 ```bash
-git clone https://github.com/conorbronsdon/avoid-ai-writing
+git clone https://github.com/alvarodevbr/avoid-ai-writing
 cd avoid-ai-writing
 agy plugin validate plugins/avoid-ai-writing
 agy plugin install ./plugins/avoid-ai-writing
 agy plugin list
 ```
 
-The Antigravity manifest lives in
-`plugins/avoid-ai-writing/.antigravity-plugin/plugin.json`; install
-`plugins/avoid-ai-writing` rather than the repository root. Check that
-`avoid-ai-writing` is enabled in `agy plugin list`; if disabled, run
-`agy plugin enable avoid-ai-writing`. Then ask the agent to audit or rewrite
-a draft using the avoid-ai-writing skill.
-
-**Without the CLI (Antigravity app or IDE):** copy the
-`plugins/avoid-ai-writing` folder from a clone into `.agents/plugins/` at
-the root of a workspace (that project only) or into
-`~/.gemini/config/plugins/` (every workspace). See
-[manual plugin installation](https://antigravity.google/docs/plugins). In
-the IDE, the Customizations dropdown in the agent side panel shows whether
-the plugin's skill loaded.
+O manifesto do Antigravity fica em `plugins/avoid-ai-writing/.antigravity-plugin/plugin.json`; instale `plugins/avoid-ai-writing` em vez da raiz do repositório.
 
 ### OpenClaw
 
-**Option 1: [Install from ClawHub](https://clawhub.ai/conorbronsdon/avoid-ai-writing)**
+**Opção 1: [Instalar via ClawHub](https://clawhub.ai/alvarodevbr/avoid-ai-writing)**
 
 ```bash
 clawhub install avoid-ai-writing
 ```
 
-The `clawhub` command is the ClawHub CLI from npm (`npm install -g clawhub`, or run it once with `npx clawhub install avoid-ai-writing`). It installs into `./skills` under the current directory; pass `--workdir` or `--dir` to install somewhere else.
-
-**Option 2: Clone into skills directory**
+**Opção 2: Clonar no diretório de skills**
 
 ```bash
-git clone https://github.com/conorbronsdon/avoid-ai-writing ~/.openclaw/skills/avoid-ai-writing
+git clone https://github.com/alvarodevbr/avoid-ai-writing ~/.openclaw/skills/avoid-ai-writing
 ```
 
 ### Cursor
 
-Drop the ported rule into your project's `.cursor/rules/`:
+Coloque a regra portada em `.cursor/rules/` do seu projeto:
 
 ```bash
 mkdir -p .cursor/rules
 curl -o .cursor/rules/avoid-ai-writing.mdc \
-  https://raw.githubusercontent.com/conorbronsdon/avoid-ai-writing/main/cursor-rules/avoid-ai-writing.mdc
+  https://raw.githubusercontent.com/alvarodevbr/avoid-ai-writing/main/cursor-rules/avoid-ai-writing.mdc
 ```
 
-See [`cursor-rules/README.md`](./cursor-rules/README.md) for activation globs and trigger phrases. The port has the same rules, tier vocabulary, context profiles, and modes as the Claude Code skill, but ships without its scripts: the detector does not run, so audits are model-only, and the preservation validator, `--style` checker, and quote normalizer become manual steps.
+Veja [`cursor-rules/README.md`](./cursor-rules/README.md) para globs de ativação e frases de gatilho.
 
 ### Hermes
 
-Drop the skill into Hermes's skills directory — it then appears automatically as `/avoid-ai-writing`, no registration needed:
-
 ```bash
-git clone https://github.com/conorbronsdon/avoid-ai-writing ~/.hermes/skills/writing/avoid-ai-writing
+git clone https://github.com/alvarodevbr/avoid-ai-writing ~/.hermes/skills/writing/avoid-ai-writing
 ```
 
 ### OpenAI Codex
 
-Codex reads [Agent Skills](https://developers.openai.com/codex/skills) in the same `SKILL.md` format. Put it in `.agents/skills/` at the repo root, or `~/.agents/skills/` to use it across all your projects:
+O Codex lê [Agent Skills](https://developers.openai.com/codex/skills) no mesmo formato `SKILL.md`:
 
 ```bash
-git clone https://github.com/conorbronsdon/avoid-ai-writing .agents/skills/avoid-ai-writing
+git clone https://github.com/alvarodevbr/avoid-ai-writing .agents/skills/avoid-ai-writing
 ```
 
-### Native ChatGPT and Codex plugin package
+### Pacote nativo de plugin para ChatGPT e Codex
 
-Published in the [OpenAI Plugins Directory](https://chatgpt.com/plugins/plugins_6a9b77b18b8881918efa9c1255868164); install it there for ChatGPT or Codex.
+Publicado no [Diretório de Plugins da OpenAI](https://chatgpt.com/plugins/plugins_6a9b77b18b8881918efa9c1255868164). O [pacote de plugin](./OPENAI_PLUGIN.md) mantém o `SKILL.md` canônico como autoridade editorial e fornece sete Skills focadas:
 
-The [plugin package](./OPENAI_PLUGIN.md) keeps the canonical `SKILL.md` as its editorial authority and provides seven focused Skills:
+- `avoid-ai-writing` — usa as instruções canônicas de auditoria e reescrita
+- `avoid-ai-writing-router` — roteia pedidos mistos e de múltiplas etapas
+- `ai-writing-detector` — executa o detector determinístico empacotado
+- `voice-preserving-rewriter` — reescreve o texto retornado preservando a voz
+- `file-edit-in-place` — edita apenas arquivos explicitamente nomeados
+- `preservation-verifier` — verifica significado e restrições antes e depois de uma reescrita
+- `false-positive-reviewer` — revisa achados do detector que precisam de contexto
 
-- `avoid-ai-writing` — uses the canonical audit and rewrite instructions
-- `avoid-ai-writing-router` — routes mixed and multi-stage requests
-- `ai-writing-detector` — runs the bundled deterministic detector
-- `voice-preserving-rewriter` — rewrites returned text while retaining voice
-- `file-edit-in-place` — edits only explicitly named files
-- `preservation-verifier` — checks meaning and constraints before and after a rewrite
-- `false-positive-reviewer` — reviews detector findings that need context
-
-From a cloned checkout, build and validate the package with:
+A partir de um clone local, construa e valide o pacote com:
 
 ```bash
 python3 scripts/package-openai-plugin.py . /tmp/avoid-ai-writing.zip --json
@@ -250,540 +226,316 @@ python3 scripts/validate-openai-plugin.py . --json
 
 ### Other agents
 
-Use the destination below for your tool. Measure the downloaded file with `wc -c dist/avoid-ai-writing.md` for its exact UTF-8 byte count before comparing byte limits; character limits count characters instead.
+Use o destino abaixo para sua ferramenta. Meça o arquivo baixado com `wc -c dist/avoid-ai-writing.md` para obter a contagem exata de bytes UTF-8.
 
-| Tool | Where to put it | Size limit |
+| Ferramenta | Onde colocar | Limite de tamanho |
 |------|-----------------|------------|
-| **Windsurf** | clone the skill directory into `.devin/skills/avoid-ai-writing/` (`.windsurf/skills/avoid-ai-writing/` is also supported) ([skills docs](https://docs.windsurf.com/windsurf/cascade/skills)) | Workspace rule files are limited to 12,000 characters ([rules docs](https://docs.windsurf.com/windsurf/cascade/memories)), so the single file does not fit in `.windsurf/rules/` |
-| **Cline** | `.clinerules/avoid-ai-writing.md` | None documented; rules use context tokens on every task ([docs](https://docs.cline.bot/features/cline-rules)) |
-| **GitHub Copilot** (VS Code) | paste into `.github/copilot-instructions.md` | None documented ([docs](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions)) |
-| **Claude.ai Projects** | paste `dist/avoid-ai-writing.md` into the project's custom instructions | None documented ([docs](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects)) |
-| **ChatGPT** | install the [native plugin package](#native-chatgpt-and-codex-plugin-package), or upload `dist/avoid-ai-writing.md` as a Custom GPT Knowledge file | A Custom GPT's Instructions field holds far less than the file; do not paste it there |
+| **Windsurf** | clone o diretório da skill em `.devin/skills/avoid-ai-writing/` (`.windsurf/skills/avoid-ai-writing/` também é suportado) | Arquivos de regras de workspace são limitados a 12.000 caracteres, portanto o arquivo único não cabe em `.windsurf/rules/` |
+| **Cline** | `.clinerules/avoid-ai-writing.md` | Nenhum documentado; regras consomem tokens de contexto em cada tarefa |
+| **GitHub Copilot** (VS Code) | cole em `.github/copilot-instructions.md` | Nenhum documentado |
+| **Claude.ai Projects** | cole `dist/avoid-ai-writing.md` nas instruções personalizadas do projeto | Nenhum documentado |
+| **ChatGPT** | instale o pacote de plugin nativo ou envie `dist/avoid-ai-writing.md` como arquivo de Conhecimento (Knowledge) de um Custom GPT | O campo Instructions de um Custom GPT comporta muito menos que o arquivo; não cole lá |
 
-For a Custom GPT Knowledge upload, add a short instruction directing the GPT to consult `avoid-ai-writing.md` when auditing or rewriting prose. Knowledge files supply reference material; uploading one alone does not activate the skill. Test the GPT in Preview with an example from this README before relying on it ([GPT configuration docs](https://help.openai.com/en/articles/8554397-creating-a-gpt)).
+### Acionando a skill
 
-### Triggering the skill
+Uma vez instalada, peça ao seu assistente para limpar a escrita de IA:
 
-Once installed, ask your assistant to clean up AI writing:
+- "Remova os IA-ismos deste post" ("Remove AI-isms from this post")
+- "Audite este rascunho em busca de sinais de IA" ("Audit this draft for AI tells")
+- "Deixe este texto com menos cara de IA" ("Make this sound less like AI")
+- "Limpe a escrita de IA neste parágrafo" ("Clean up AI writing in this paragraph")
 
-- "Remove AI-isms from this post"
-- "Audit this draft for AI tells"
-- "Make this sound less like AI"
-- "Clean up AI writing in this paragraph"
+No **modo rewrite** (padrão), a skill conclui sua revisão e verificação disponível antes de retornar o texto reescrito exatamente uma vez:
 
-In **rewrite mode** (default), the skill completes its review and available verification before returning the rewritten text exactly once:
+1. **Final rewrite** — a versão final verificada ou honestamente qualificada
+2. **Changes** — um breve resumo quando edições foram feitas e o resumo é útil
+3. **Verification** — passagens de edição usadas, verificações que rodaram, motivo de parada e quaisquer achados intencionais, protegidos, bloqueados pela fonte ou não resolvidos
 
-1. **Final rewrite** — the verified or honestly qualified final version
-2. **Changes** — a short summary when edits were made and the summary is useful
-3. **Verification** — editing passes used, checks that ran, stop reason, and any intentional, protected, source-blocked, or unresolved findings
+No **modo detect**, a skill retorna duas seções:
 
-Ask for a detailed or exhaustive audit to add quoted findings before the final rewrite. The response still contains one full version. Clean input can be returned unchanged with zero editing passes.
+1. **Issues found** — cada IA-ismo identificado, agrupado por gravidade (P0/P1/P2)
+2. **Assessment** — quais alertas são problemas claros vs. padrões que podem ser intencionais ou eficazes no contexto
 
-In **detect mode**, the skill returns two sections:
+## Referência de padrões
 
-1. **Issues found** — every AI-ism identified, grouped by severity (P0/P1/P2)
-2. **Assessment** — which flags are clear problems vs. patterns that may be intentional or effective in context
+> Exemplos representativos do catálogo — não a lista exaustiva (que está em [`references/patterns.md`](./references/patterns.md)). O catálogo de prosa voltado para humanos e o [motor detector](./detector/) usam **contagens diferentes de propósito**: the engine implements 54 `type` categories porque divide as camadas de vocabulário e adiciona sinais estilométricos/de impressão digital (distribuição de pontuação, entropia de palavras funcionais, detecção de truques de bypass) que funcionam como matemática sobre um documento em vez de uma regra de consulta manual. Os dois são mapeados em [`detector/CATEGORIES.md`](./detector/CATEGORIES.md); não tente forçar uma contagem a igualar a outra.
 
-Trigger detect mode with: "detect," "flag only," "audit only," "just flag," "scan," or similar.
+### Padrões de Conteúdo
 
-## Pattern reference
-
-> Representative examples from the catalog — not the exhaustive list (that's [`references/patterns.md`](./references/patterns.md)). The skill's human-facing prose catalog and the [detector engine](./detector/) use **different counts on purpose**: the engine implements 54 `type` categories because it splits the vocabulary tiers and adds stylometric/fingerprint signals (punctuation distribution, function-word entropy, bypass-trick detection) that work as math over a document rather than as a rule you'd look up. The two are mapped in [`detector/CATEGORIES.md`](./detector/CATEGORIES.md); don't "fix" one count to match the other.
-
-### Content Patterns
-
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 1 | **Significance inflation** | "marking a pivotal moment in the evolution of..." | State the supported event; do not invent a date or purpose |
-| 2 | **Notability name-dropping** | "cited in NYT, BBC, and Wired" | Keep supported citations; remove claims that they prove importance |
-| 3 | **Superficial -ing analyses** | "symbolizing... reflecting... showcasing..." | Replace with specific facts or cut |
-| 4 | **Promotional language** | "nestled within the breathtaking region" | Keep the supplied location; remove promotional modifiers |
-| 5 | **Vague attributions** | "Experts believe it plays a crucial role" | Request the source, or flag the claim for verification |
-| 6 | **Formulaic challenges** | "Despite challenges... continues to thrive" | Name the challenge and the response |
-| 7 | **Novelty inflation** | "He introduced a term I hadn't heard before" | Keep the personal observation if it matters; do not invent an explanation |
+| 1 | **Inflação de importância** | "marcando um momento crucial na evolução de..." | Declare o evento fundamentado; não invente data ou propósito |
+| 2 | **Desfile de citações (Name-dropping)** | "citado no NYT, BBC, Folha e Wired" | Mantenha citações fundamentadas; remova alegações de que provam importância |
+| 3 | **Análises superficiais no gerúndio** | "simbolizando... refletindo... evidenciando..." | Substitua por fatos específicos ou corte |
+| 4 | **Linguagem promocional** | "aninhado na deslumbrante região" | Mantenha a localização fornecida; remova modificadores promocionais |
+| 5 | **Atribuições vagas** | "Especialistas acreditam que desempenha papel crucial" | Peça a fonte ou sinalize a afirmação para verificação |
+| 6 | **Desafios padronizados** | "Apesar dos desafios... continua a prosperar" | Nomeie o desafio e a resposta |
+| 7 | **Inflação de novidade** | "Ele introduziu um termo que ninguém está nomeando" | Mantenha a observação pessoal se importar; não invente novidade |
 
-### Language Patterns
+### Padrões de Linguagem
 
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 8 | **Word/phrase replacements (3 tiers)** | "leverage... robust... seamless... utilize" | "use... reliable... smooth... use" |
-| 9 | **Copula avoidance** | "serves as... features... boasts" | "is... has" |
-| 10 | **Synonym cycling** | "developers... engineers... practitioners... builders" | "developers" (repeat the clear word) |
-| 11 | **Template phrases** | "a [adj] step towards [adj] infrastructure" | Describe the specific outcome |
-| 12 | **Filler phrases** | "In order to," "Due to the fact that" | "To," "Because" |
-| 13 | **False ranges** | "from the Big Bang to dark matter" | List the actual topics |
-| 14 | **Parenthetical hedging** | "tools (like X and Y)" | Name them directly or cut |
+| 8 | **Substituição de palavras/frases (3 camadas)** | "alavancar... robusto... fluido... utilizar" | "usar... confiável... simples... usar" |
+| 9 | **Fuga do verbo de ligação (cópula)** | "serve como... conta com... ostenta" | "é... tem" |
+| 10 | **Rodízio forçado de sinônimos** | "desenvolvedores... engenheiros... profissionais... construtores" | "desenvolvedores" (repita o termo claro) |
+| 11 | **Frases de template** | "um passo [adj] em direção a uma infraestrutura [adj]" | Descreva o resultado específico |
+| 12 | **Expressões de enchimento (Fillers)** | "A fim de", "Devido ao fato de que" | "Para", "Porque" |
+| 13 | **Falsos intervalos** | "do Big Bang à matéria escura" | Liste os tópicos reais |
+| 14 | **Ressalvas entre parênteses** | "(e, cada vez mais, X)" | Nomeie em frase própria ou corte |
 
-### Structure Patterns
+### Padrões de Estrutura
 
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 15 | **Formatting** | Em dashes (— and --), bold overuse, emoji headers, bullet-heavy | Commas/periods, prose paragraphs |
-| 16 | **Sentence structure** | "It's not X, it's Y" + hollow intensifiers + hedging | Direct positive statements |
-| 17 | **Structural issues** | Uniform paragraphs, formulaic openings, too-clean grammar | Varied length, lead with the point |
-| 18 | **Transition phrases** | "Moreover," "Furthermore," "In today's [X]" | "and," "also," or restructure |
-| 19 | **Inline-header lists** | "**Speed:** Speed improved by..." | Write the point directly |
-| 20 | **Title case headings** | "Strategic Negotiations And Partnerships" | "Strategic negotiations and partnerships" |
-| 21 | **Numbered list inflation** | "Here are 7 reasons why..." | Cut to the 2-3 that matter |
-| 22 | **False concession** | "While X has limitations, it's still remarkable" | State the real tradeoff |
-| 23 | **Rhetorical question openers** | "What if there were a better way to...?" | Lead with the claim |
+| 15 | **Formatação** | Travessões (— e --), excesso de negrito, emojis em títulos, excesso de bullets | Vírgulas/pontos, parágrafos em prosa |
+| 16 | **Estrutura de frase** | "Não é X, é Y" + intensificadores vazios + ressalvas | Afirmações positivas diretas |
+| 17 | **Problemas estruturais** | Parágrafos uniformes, aberturas padronizadas, gramática artificialmente limpa | Comprimento variado, comece pelo ponto |
+| 18 | **Expressões de transição** | "Ademais,", "Outrossim,", "No [X] de hoje" | "e", "também" ou reestruture |
+| 19 | **Listas com cabeçalho repetido** | "**Velocidade:** A velocidade melhorou em..." | Escreva o ponto diretamente |
+| 20 | **Títulos em Title Case** | "Negociações Estratégicas E Parcerias Principais" | "Negociações estratégicas e parcerias principais" |
+| 21 | **Inflação de listas numeradas** | "Aqui estão 7 razões pelas quais..." | Corte para as 2-3 que importam |
+| 22 | **Estrutura de falsa concessão** | "Embora X seja impressionante, desafios permanecem" | Declare a compensação (*tradeoff*) real |
+| 23 | **Aberturas com pergunta retórica** | "Mas o que isso significa para os desenvolvedores?" | Comece pela afirmação |
 
-### Communication Patterns
+### Padrões de Comunicação
 
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 24 | **Chatbot artifacts** | "I hope this helps! Let me know if..." | Remove entirely |
-| 25 | **"Let's" constructions** | "Let's explore," "Let's break this down" | Just start with the point |
-| 26 | **Cutoff disclaimers** | "While details are limited in available sources..." | Find sources or remove |
-| 27 | **Generic conclusions** | "The future looks bright," "Only time will tell" | Specific closing thought or cut |
-| 28 | **Stock reaction framing** | "What surprised me most," "I was fascinated to discover" | Keep specific, authentic reactions; cut empty stock framing or make the reaction concrete |
-| 29 | **Reasoning chain artifacts** | "Let me think step by step," "Breaking this down" | State conclusion, then evidence |
-| 30 | **Sycophantic tone** | "Great question!", "You're absolutely right!" | Remove entirely |
-| 31 | **Acknowledgment loops** | "You're asking about," "To answer your question" | Just answer directly |
-| 32 | **Confidence calibration** | "It's worth noting," "Interestingly," "Surprisingly" | Let the fact speak for itself |
+| 24 | **Artefatos de chatbot** | "Espero que isso ajude! Avise se precisar..." | Remova completamente |
+| 25 | **Construções com "Vamos"** | "Vamos explorar", "Vamos destrinchar isso" | Comece direto pelo ponto |
+| 26 | **Avisos de corte de conhecimento** | "Até minha última atualização..." | Encontre as fontes ou remova |
+| 27 | **Conclusões genéricas** | "O futuro parece brilhante", "Só o tempo dirá" | Pensamento final específico ou corte |
+| 28 | **Moldura de reação padronizada** | "O que mais me surpreendeu", "Fiquei fascinado ao descobrir" | Mantenha reações autênticas; corte molduras vazias |
+| 29 | **Artefatos de cadeia de raciocínio** | "Deixe-me pensar passo a passo", "Dividindo isso em partes" | Declare a conclusão e depois a evidência |
+| 30 | **Tom bajulador (Sycophancy)** | "Ótima pergunta!", "Você tem toda razão!" | Remova completamente |
+| 31 | **Loops de reconhecimento** | "Você está perguntando sobre", "Para responder à sua pergunta" | Responda diretamente |
+| 32 | **Calibração de confiança** | "Vale notar que", "Curiosamente,", "Surpreendentemente," | Deixe o fato falar por si |
 
-### Meta Patterns
+### Metapadrões
 
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 33 | **Excessive structure** | 5 headers in 200 words, "Overview:", "Key Points:" | Merge sections, use specific headers |
-| 34 | **Rhythm and uniformity** | All sentences 15–25 words, all paragraphs same length | Mix short/long, fragments, questions |
-| 35 | **Over-polishing** | Every irregularity sanded away, perfectly uniform prose | Keep natural disfluency, varied rhythm |
-| 36 | **Rewrite-vs-patch threshold** | 5+ vocabulary flags + 3+ pattern categories + uniform rhythm | Advise full rewrite, not patching |
+| 33 | **Estrutura excessiva** | 5 títulos em 200 palavras, "Visão geral:", "Pontos principais:" | Funda seções, use títulos específicos |
+| 34 | **Ritmo e uniformidade** | Todas as frases com 15–25 palavras, parágrafos do mesmo tamanho | Misture curtas/longas, fragmentos, perguntas |
+| 35 | **Polimento excessivo** | Cada irregularidade lixada, prosa perfeitamente uniforme | Mantenha disfluência natural e ritmo variado |
+| 36 | **Limite entre reescrever do zero e remendar** | 5+ alertas de vocabulário + 3+ categorias + ritmo uniforme | Recomende reescrita estrutural quando autorizado |
 
-### Structural Detection (v3.4)
+### Detecção Estrutural (v3.4)
 
-Added in v3.4 to catch LLM output that sidesteps the vocabulary tables by substituting synonyms but still leans on structural shapes detectors can identify. Crypto/web3/AI-infra content is where these patterns concentrate most heavily, but the rules generalize to any social-length post.
-
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 37 | **Tier 3 phrases (multi-word boilerplate)** | "the integration of," "decentralized compute," "community-driven," "long-term sustainability" stacked across a piece | Replace the repeated phrase with a specific claim, or vary genuinely. Flagged per-phrase at ≥2 hits, or as a cluster when ≥3 distinct phrases appear |
-| 38 | **Future-narrative closers** | "may become one of the most important narratives of the next market cycle" | Pick the falsifiable version. "X may exceed Y by 2027" is a prediction; the template form is not |
-| 39 | **Hedge-stacked predictions** | "could potentially create," "may eventually unlock" | Pick one. Each hedge cancels the next |
-| 40 | **"Real/actual" adjective inflation** | "real on-chain tokenomics," "actual reward sustainability" | Drop the empty intensifier and add the specific claim. Carve-out: "real on-chain settlement, *not* bridged IOUs" is honest contrastive writing — the AI tell is the unsaid contrast |
-| 41 | **Hashtag stuffing** | 15-tag trailing block: `#AI #Crypto #Web3 #Innovation #FutureTech…` | 2-3 specific tags max, or none. Empirical threshold: 6+ tags is near-universal in LLM social output, rare in thoughtful human posts |
-| 42 | **Bullet lists of bare noun phrases** | `* Stable mining efficiency / Reliable pool connectivity / Optimized RandomX performance / Low failed share rates / Effective hardware utilization / Consistent thermal stability` | Convert to prose, or rewrite each item as a full claim with a verb and a number. Carve-out: genuine list content (changelogs, parameter docs, ingredient lists) where bare NPs are correct |
+| 37 | **Frases do Tier 3 (clichês compostos)** | "a integração de", "computação descentralizada", "impulsionado pela comunidade", "sustentabilidade a longo prazo" empilhados | Substitua a frase repetida por uma afirmação específica |
+| 38 | **Fechamentos de narrativa futura** | "pode se tornar uma das narrativas mais importantes do próximo ciclo" | Escolha uma versão falseável com dados da fonte |
+| 39 | **Previsões com acúmulo de ressalvas** | "poderia potencialmente criar", "pode eventualmente destravar" | Escolha apenas um qualificador |
+| 40 | **Inflação de adjetivos "real/verdadeiro"** | "tokenomics real on-chain", "sustentabilidade efetiva de recompensas" | Remova o intensificador vazio (exceto quando o contraste for nomeado) |
+| 41 | **Excesso de hashtags** | Bloco final com 15 tags: `#IA #Crypto #Web3 #Inovacao #FutureTech…` | No máximo 2-3 tags específicas, ou nenhuma |
+| 42 | **Listas de tópicos com sintagmas nominais puros** | `* Eficiência estável / Conectividade confiável / Desempenho otimizado / Baixas taxas de falha / Utilização eficaz / Estabilidade térmica` | Converta em prosa ou reescreva cada item como afirmação completa |
 
-### AI-tool fingerprints & later additions (v3.5–3.8)
+### Impressões digitais de ferramentas de IA e adições posteriores (v3.5–3.8)
 
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 43 | **Unfilled placeholders** | `[Your Name]`, `[INSERT SOURCE]`, `2025-XX-XX` | Fill in with real content or delete — shipped placeholders are a near-definitive tell |
-| 44 | **Chatbot citation markup** | `citeturn0search0`, `oai_citation`, `contentReference[oaicite:0]` | Strip the markup token entirely |
-| 45 | **AI-tool URL parameters** | `utm_source=chatgpt.com`, `utm_source=copilot.com` | Strip the tracking parameter; keep the URL if the link matters |
-| 46 | **Speculative gap-filling** | "maintains a low profile," "likely began his career" | Cut the guess, or replace with a sourced fact |
-| 47 | **Hyphenated modifier stacking** | "a high-quality, well-architected, future-proof solution" | Cut to the modifier that matters; the individual hyphens may be correct |
-| 48 | **Infomercial engagement hooks** | "The catch?", "The kicker?", "Here's the thing." | Delete the hook, state the thing |
-| 49 | **Vocabulary diversity (low TTR)** | Narrow, repetitive word range across 200+ words | Broaden the *what* — name specific things, cite specific cases |
-| 50 | **Self-labeling significance** | "That last move is the contrarian one," "This is the interesting part" | Cut the label; let the explanation carry the weight, or reposition the item so it stands out on its own |
-| 51 | **List-label periods** | `- **Intros.** Years of conferences and operator network.` (also unbolded: `- Intros. Years of...`) | Use a colon, not a period, on a list label: `- **Intros:** years of conferences and operator network.` |
+| 43 | **Placeholders não preenchidos** | `[Seu Nome]`, `[INSERIR FONTE]`, `2025-XX-XX` | Preencha com conteúdo fornecido ou apague |
+| 44 | **Marcação de citação de chatbot** | `citeturn0search0`, `oai_citation`, `contentReference[oaicite:0]` | Remova o token de marcação completamente |
+| 45 | **Parâmetros de URL de ferramentas de IA** | `utm_source=chatgpt.com`, `utm_source=copilot.com` | Remova o parâmetro de rastreamento; mantenha a URL se o link importar |
+| 46 | **Preenchimento especulativo de lacunas** | "mantém um perfil discreto", "provavelmente iniciou sua carreira" | Corte o palpite ou substitua por fato com fonte |
+| 47 | **Empilhamento de modificadores hifenizados** | "uma solução de alta qualidade, bem-arquitetada e à prova de futuro" | Corte para o modificador que importa |
+| 48 | **Ganchos de engajamento estilo infomercial** | "O pulo do gato?", "A pegadinha?", "A questão é a seguinte." | Apague o gancho, declare o fato |
+| 49 | **Diversidade de vocabulário (baixo TTR)** | Vocabulário estreito e repetitivo ao longo de 200+ palavras | Amplie os fatos específicos citados da fonte |
+| 50 | **Importância autorrotulada** | "Esse último movimento é o contraintuitivo", "Esta é a parte interessante" | Corte o rótulo; deixe a explicação sustentar o peso |
+| 51 | **Ponto final em rótulos de lista** | `- **Introduções.** Anos de conferências e rede de operadores.` | Use dois-pontos em vez de ponto: `- **Introduções:** anos de conferências...` |
 
-### Conversational-register patterns (v3.15)
+### Padrões de registro conversacional (v3.15)
 
-Added after a real-world exchange in which a maintainer called out an assisted-sounding GitHub issue reply with "I prefer to talk human to human." Both are judgment calls rather than regex-detectable (an ordinary human paragraph and an AI-generated one can look structurally identical; the tell is the register and the redundant context, not a fixed shape) — see the `detector/CATEGORIES.md` §C note for why a first attempt at a wall-of-text detector was reverted.
-
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 52 | **Wall-of-text replies** | A 4+ sentence, sub-150-word reply delivered as one unbroken paragraph with no line breaks — the shape LLMs default to in issue/PR comments, chat, and DMs | Break at thought boundaries. One idea per line-group, the way a person actually types a reply |
-| 53 | **Recap-flattery opener** | "Thanks for all the legwork here — the migration script and the rollback plan you worked through are what made this possible." | Substance first. If thanks is warranted, one plain clause without the recap: "Thanks for the legwork — this looks right to me" |
+| 52 | **Respostas em bloco compacto (Wall-of-text)** | Uma resposta de 4+ frases e menos de 150 palavras entregue como um único parágrafo sem quebras de linha | Quebre nas fronteiras de pensamento |
+| 53 | **Abertura bajuladora com recapitulação** | "Obrigado por todo o trabalho pesado aqui — o script de migração e o plano de rollback que você fez tornaram isso possível." | Vá direto à substância; mantenha o agradecimento curto sem recapitular |
 
-### Share-post framing (v3.20)
+### Molduras de posts de compartilhamento (v3.20)
 
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 54 | **Lingering-attention claims** | "The line I keep coming back to:", "I can't stop thinking about this," "this has been rattling around in my head all week" | Open on the thing itself. Carve-out: keep the frame when a reason follows ("I keep coming back to exit-voice because it predicts who quits") |
+| 54 | **Alegações de atenção persistente** | "A frase à qual sempre volto:", "Não consigo parar de pensar nisso" | Abra direto na ideia (exceto quando acompanhada do motivo explicativo) |
 
-### Narrated candor (v3.21)
+### Franqueza narrada (v3.21)
 
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 55 | **Narrated candor** | "Two caveats I would rather flag than let you discover later:", "I want to be upfront:" | State the caveats. Judgment-only: the same words carry real content in conflict-of-interest disclosure ("in the interest of full disclosure, I own shares in…"), which a regex cannot separate from the empty frame |
+| 55 | **Franqueza narrada** | "Duas ressalvas que prefiro sinalizar agora do que deixar você descobrir depois:", "Quero ser transparente:" | Declare as ressalvas diretamente |
 
-### Unnecessary hyphenation (v3.24)
+### Hifenização desnecessária (v3.24)
 
-| # | Pattern | Before | After |
+| # | Padrão | Antes | Depois |
 |---|---------|--------|-------|
-| 56 | **Unnecessary hyphenation** | "research-impact aggregator," "code-base," "in real-time," "works out-of-the-box" | "research impact aggregator," "codebase," "in real time," "works out of the box." Preserve legitimate modifiers such as "real-time analytics" |
+| 56 | **Hifenização desnecessária** | "research-impact aggregator", "code-base", "in real-time", "works out-of-the-box" | "research impact aggregator", "codebase", "in real time", "works out of the box" |
 
-Two writer-side **tests** round out the catalog (judgment checks, not auto-detected): **paragraph-reshuffle immunity** (can you swap two body paragraphs without breaking the piece?) and the **treadmill effect** ("what's actually new in this paragraph?").
+Dois **testes** do lado do autor completam o catálogo (verificações de julgamento, não autodetectadas): **imunidade a embaralhamento de parágrafos** (você consegue trocar dois parágrafos do corpo sem quebrar o texto?) e o **efeito esteira / baixa densidade de informação** ("o que há de realmente novo neste parágrafo?").
 
-## Full Example
+## Exemplo Completo (PT-BR)
 
-**Before (AI-generated):**
+**Antes (gerado por IA):**
 
-> Certainly! Here's a comprehensive overview of Acme's Series B.
+> Certamente! Aqui está uma visão geral abrangente da Série B da Acme.
 >
-> Acme Analytics, a vibrant startup nestled in the heart of Boulder's thriving tech ecosystem, has secured $40M in Series B funding — marking a watershed moment for the company and the observability landscape at large. The round was led by Sequoia, with participation from Andreessen Horowitz, Y Combinator, and Index Ventures, underscoring the robust investor confidence in Acme's vision.
+> A Acme Analytics, uma startup vibrante aninhada no coração do próspero ecossistema tecnológico de Florianópolis, garantiu US$ 40 milhões em financiamento de Série B — marcando um divisor de águas para a empresa e para o cenário de observabilidade como um todo. A rodada foi liderada pela Sequoia, com participação da Andreessen Horowitz, Y Combinator e Index Ventures, ressaltando a robusta confiança dos investidores na visão da Acme.
 >
-> The platform serves as a unified hub for engineering teams, featuring real-time dashboards, boasting sub-second query performance, and presenting a seamless integration layer. It's not just another monitoring tool — it's a paradigm shift in how organizations navigate complex distributed systems. Experts believe Acme is poised to disrupt the $15B observability market. Studies show that companies utilizing comprehensive monitoring solutions can ascertain issues 40% faster.
+> A plataforma serve como um hub unificado para equipes de engenharia, contando com painéis em tempo real, ostentando desempenho de consultas abaixo de um segundo e apresentando uma camada de integração perfeita. Não é apenas mais uma ferramenta de monitoramento — é uma mudança de paradigma na forma como as organizações navegam por sistemas distribuídos complexos. Especialistas acreditam que a Acme está posicionada para revolucionar o mercado de observabilidade de US$ 15 bilhões. Estudos mostram que empresas que utilizam soluções abrangentes de monitoramento conseguem apurar problemas 40% mais rápido.
 >
-> - 🚀 **Performance:** The platform streamlines incident response, empowering engineers to resolve issues faster.
-> - 💡 **Scale:** Acme fosters collaboration across teams, from frontend developers to SRE practitioners to platform builders to infrastructure engineers.
-> - ✅ **Adoption:** Customer adoption continues to accelerate, reflecting broader industry trends.
+> - 🚀 **Desempenho:** A plataforma otimiza a resposta a incidentes, empoderando engenheiros para resolver problemas mais rápido.
+> - 💡 **Escala:** A Acme fomenta a colaboração entre equipes, de desenvolvedores frontend a profissionais de SRE, construtores de plataforma e engenheiros de infraestrutura.
+> - ✅ **Adoção:** A adoção pelos clientes continua a acelerar, refletindo tendências mais amplas do setor.
 >
-> Moreover, Acme's approach showcases the potential of modern observability — symbolizing a shift toward proactive monitoring, reflecting years of R&D investment, and highlighting the intricate interplay between data collection and actionable intelligence. Despite challenges common in the crowded monitoring space, Acme continues to thrive. In order to fully capitalize on this momentum, the company plans to expand its go-to-market endeavors.
+> Ademais, a abordagem da Acme evidencia o potencial da observabilidade moderna — simbolizando uma mudança em direção ao monitoramento proativo, refletindo anos de investimento em P&D e destacando a intrincada interação entre coleta de dados e inteligência acionável. Apesar dos desafios comuns no disputado espaço de monitoramento, a Acme continua a prosperar. A fim de capitalizar totalmente esse impulso, a empresa planeja expandir seus empreendimentos de go-to-market.
 >
-> In conclusion, the future looks bright for Acme Analytics. Only time will tell how this game-changer will reshape the observability paradigm. Feel free to reach out if you'd like more details!
+> Em conclusão, o futuro parece brilhante para a Acme Analytics. Só o tempo dirá como esse divisor de águas vai remodelar o paradigma da observabilidade. Sinta-se à vontade para entrar em contato se quiser mais detalhes!
 
-**After (cleaned up):**
+**Depois (limpo):**
 
-> Acme Analytics, a Boulder-based startup, raised a $40M Series B led by Sequoia, with participation from Andreessen Horowitz, Y Combinator, and Index Ventures.
+> A Acme Analytics, startup de Florianópolis, captou US$ 40 milhões em uma Série B liderada pela Sequoia, com participação da Andreessen Horowitz, Y Combinator e Index Ventures.
 >
-> Its observability platform gives engineering teams real-time dashboards, queries that run in under a second, and an integration layer. The platform helps engineers resolve incidents faster and supports collaboration across frontend, SRE, platform, and infrastructure teams. Customer adoption is accelerating. Acme has invested in R&D for years and plans to expand its go-to-market work in a crowded monitoring market.
+> Sua plataforma de observabilidade oferece às equipes de engenharia painéis em tempo real, consultas que rodam em menos de um segundo e uma camada de integração. A ferramenta ajuda engenheiros a resolver incidentes mais rápido e apoia o trabalho conjunto entre equipes de frontend, SRE, plataforma e infraestrutura. A adoção por clientes está crescendo. A Acme investe em P&D há anos e planeja expandir sua operação de go-to-market em um mercado de monitoramento disputado.
 
-**Claims needing sources:** The input attributes a prediction about a $15B market to unnamed experts and a 40% improvement in issue identification to unspecified studies. Verify those sources before publishing the claims. The rewrite leaves them out; it does not replace them with invented benchmarks, customers, or plans. The product and adoption statements above also remain supplied claims, not independently verified facts.
+**Afirmações que precisam de fontes:** O texto de entrada atribui uma previsão sobre um mercado de US$ 15 bilhões a especialistas não nomeados e uma melhoria de 40% na identificação de problemas a estudos não especificados. Verifique essas fontes antes de publicar as afirmações. A reescrita as deixa de fora e não as substitui por benchmarks, clientes ou planos inventados.
 
-**What the skill caught:** chatbot framing, promotional modifiers, inflated significance, roundabout verbs, repeated role synonyms, empty contrast, list decoration, vague attribution, filler, and generic closing language. The rewrite preserves the named investors and supplied capabilities, consolidates the team list, and flags the unsupported market and study claims for verification.
+## Executando o detector
 
-That's 35+ AI tells.
-
-## Run the detector
-
-The skill ships a deterministic, zero-dependency detection engine in
-[`detector/`](./detector/) — the same engine the rules above
-describe, as runnable code. It works in Node (`>=18`) and the browser with no
-build step.
-
-It's also the single source of the numeric score: the skill itself (and `detect` mode) report *which* patterns are present and how severe (P0/P1/P2), and the engine is what turns those into one computed 0–100 `score`. There's deliberately no second, prose-estimated score in `SKILL.md` — one scorer, not two.
+A skill inclui um motor de detecção determinístico e sem dependências em [`detector/`](./detector/) — o mesmo motor que as regras acima descrevem, como código executável. Ele roda em Node (`>=18`) e no navegador sem etapa de build.
 
 ```bash
 npm install avoid-ai-writing-detector
 ```
 
-The npm package includes the detector runtime and CLI entry points, but not the
-repository's `scripts/` utilities. Clone the repository to run those scripts.
-
 ```js
 const AIDetector = require("avoid-ai-writing-detector");
-const { score, label, issues } = AIDetector.analyzeText("Your text here…");
+const { score, label, issues } = AIDetector.analyzeText("Seu texto aqui…");
 console.log(score, label, issues.length);
 ```
 
-### Score a file or piped text from the command line
-
-The package also ships a zero-dependency CLI:
+### Pontuar um arquivo ou texto via pipe na linha de comando
 
 ```bash
 npx --package avoid-ai-writing-detector avoid-ai-writing draft.md
 cat draft.md | npx --package avoid-ai-writing-detector avoid-ai-writing --context technical
 ```
 
-After a global install (`npm install -g avoid-ai-writing-detector`) the command
-is available as `avoid-ai-writing` directly.
+### Validar prosa no GitHub Actions ou pre-commit
 
-It prints the complete `analyzeText()` result as JSON and exits 0; usage and I/O
-errors go to stderr with exit code 2. Run `avoid-ai-writing --help` for the
-`--context` and `--source-mode` options.
-
-### Gate prose in GitHub Actions or pre-commit
-
-The repository also ships a deterministic gate that fails on **finding count per
-file**, not the composite 0–100 score. That keeps CI policy independent of score
-recalibration work such as #70.
-
-[View Avoid AI Writing Gate on the GitHub Marketplace](https://github.com/marketplace/actions/avoid-ai-writing-gate),
-or add it directly to a workflow:
+O repositório também fornece um gate determinístico que falha na **contagem de achados por arquivo**, não na pontuação composta de 0–100:
 
 ```yaml
 # .github/workflows/prose.yml
 steps:
   - uses: actions/checkout@v7
   - id: gate
-    uses: conorbronsdon/avoid-ai-writing@v3.36.0
+    uses: alvarodevbr/avoid-ai-writing@v3.36.0
     with:
       glob: "**/*.md"
       threshold: "6"
       context: technical
 ```
 
-The example pins the release tag. For stricter supply-chain controls, pin
-`uses:` to the full commit SHA for that release.
-
-Step outputs and the gate CLI's `--json` flag require `v3.36.0` or later. On
-`v3.35.0` and earlier, `steps.gate.outputs.*` resolves to empty strings.
-
-The Action exposes step outputs via `$GITHUB_OUTPUT`:
-
-- `pass`: `'true'` when all scanned files are within threshold; `'false'` on a threshold failure or operational error.
-- `total-findings`: total count of deterministic findings across scanned files; unset on an operational error (exit 2).
-- `failed-files`: count of files exceeding the threshold; unset on an operational error (exit 2).
-
-Downstream steps can consume these outputs:
-
-```yaml
-  - name: Report gate summary
-    if: always() && steps.gate.outputs.total-findings != ''
-    run: |
-      echo "Pass: ${{ steps.gate.outputs.pass }}"
-      echo "Total findings: ${{ steps.gate.outputs.total-findings }}"
-      echo "Failed files: ${{ steps.gate.outputs.failed-files }}"
-```
-
-The underlying `avoid-ai-writing-gate` CLI also accepts `--json` to emit structured JSON on stdout:
-
-```json
-{
-  "schemaVersion": 1,
-  "threshold": 6,
-  "context": "technical",
-  "sourceMode": "rendered-markdown",
-  "pass": false,
-  "totalFindings": 9,
-  "failedFiles": 1,
-  "files": [
-    { "path": "README.md", "findings": 2, "pass": true, "types": ["em-dash", "tier1"] },
-    { "path": "docs/guide.md", "findings": 7, "pass": false, "types": ["hedge-stack", "tier1", "tier2"] }
-  ]
-}
-```
-
-Top-level fields report `schemaVersion`, `threshold`, `context`, `sourceMode`, `pass` (boolean), `totalFindings`, `failedFiles`, and `files` (preserving scan order). Each file item reports `path`, `findings`, `pass`, and sorted distinct detector `types`. When no files match the input or glob, `files` is empty with `pass: true`.
-
-`threshold` is the maximum number of deterministic findings allowed in **each**
-file. The shipped default is **6**. The
-[dated gate calibration](evals/gate-calibration/2026-10-15.md) records the measured
-rejection counts, per-register limits and exact detector/corpus revision under
-the Action's `technical` + `rendered-markdown` settings. Set
-`threshold: "0"` explicitly when a project intentionally wants a strict
-zero-findings policy. This is a writing-quality baseline, not an authorship
-classifier calibration.
-
-The default context is `technical`, and Markdown is analyzed with
-`rendered-markdown` source masking.
-
-Pre-commit users can install the repository hook:
+Usuários de pre-commit podem instalar o hook do repositório:
 
 ```yaml
 repos:
-  - repo: https://github.com/conorbronsdon/avoid-ai-writing
+  - repo: https://github.com/alvarodevbr/avoid-ai-writing
     rev: v3.36.0
     hooks:
       - id: avoid-ai-writing
 ```
 
-Set `rev` to a release tag or commit SHA. With a branch name such as `main`,
-pre-commit prints a warning and never updates the hook after the first install.
-Run `pre-commit autoupdate` to move the tag to the newest release. The hook scans
-staged `.md` / `.mdx` files with the same **6-findings** corpus-backed default.
-Use `args` to override the threshold, context, or source mode:
-
-```yaml
-      - id: avoid-ai-writing
-        args: ["--threshold", "0", "--context", "technical", "--source-mode", "plain", "--"]
-```
-
-Pre-commit replaces the hook's default `args: ["--"]` when you provide `args`.
-End an overriding list with `"--"` to protect filenames that begin with a dash.
-The entry keeps its defaults; later options in `args` take precedence.
-
-The gate only **detects**. Preservation validation still requires an original and
-a rewritten file and remains a separate command:
-
-```bash
-node detector/validate.js before.md after.md
-```
-
-That path is relative to a cloned checkout. The npm package ships the same
-file, so after `npm install avoid-ai-writing-detector` run
-`node node_modules/avoid-ai-writing-detector/detector/validate.js before.md after.md`.
-
-When working from a cloned checkout instead of the published npm package:
-
-```bash
-npm test          # run the detector's fixtures (no deps to install)
-```
-
-```js
-const AIDetector = require("./detector/patterns.js");
-const { score, label, issues } = AIDetector.analyzeText("Your text here…");
-```
-
-When the input is a Markdown source file, pass
-`{ sourceMode: "rendered-markdown" }` to exclude initial YAML frontmatter and
-HTML comments from the score while keeping issue offsets aligned with the
-original file. Plain-text behavior remains the default.
-
-To keep a passage out of the score, such as a specimen of AI prose a page
-quotes on purpose, wrap it in ignore markers. They work in every source mode
-and in HTML source:
+Para manter uma passagem fora da pontuação (como um exemplo de prosa de IA citado de propósito), envolva-a em marcadores de ignore:
 
 ```html
 <!-- avoid-ai-writing:ignore-start -->
-It's not just a search index, it's a foundation for trust.
+Não é apenas um índice de busca, é uma base de confiança.
 <!-- avoid-ai-writing:ignore-end -->
 ```
 
-Each marker must sit on a line of its own. The markers and the text between
-them are blanked before scoring, and `stats.ignoredRegions` counts the regions.
-Markers inside code blocks, HTML `<pre>` or `<code>` elements, YAML
-frontmatter, inline prose, or quotations do nothing. Starts
-nest, so each needs its own end, and a start with no end runs to the end of the
-text. The
-detector reads source text, not rendered HTML, so an HTML-to-text step that
-drops comments also drops the markers.
+Veja [`detector/README.md`](./detector/README.md) para a API completa do `analyzeText` e [`detector/CATEGORIES.md`](./detector/CATEGORIES.md) para o mapa regra ↔ categoria.
 
-See [`detector/README.md`](./detector/README.md) for the full `analyzeText` API
-and [`detector/CATEGORIES.md`](./detector/CATEGORIES.md) for the rule ↔ category
-map that keeps `SKILL.md` and the engine in sync.
+### Usar o detector via MCP
 
-### Use the detector over MCP
-
-[`avoid-ai-writing-mcp`](https://github.com/conorbronsdon/avoid-ai-writing-mcp)
-wraps the published detector as a local stdio MCP server. It pins one exact
-detector version (see `dependencies` in the MCP repo's `package.json`), so its
-scores can differ from the current CLI. For the current
-rules, use the CLI or the GitHub Action; the MCP server picks up detector
-changes only when it publishes a new release. It exposes two
-read-only tools: `score_text` for a compact result and `audit_text` for the full
-list of findings, suggestions, statistics, and highlighted sentence regions.
+[`avoid-ai-writing-mcp`](https://github.com/alvarodevbr/avoid-ai-writing-mcp) encapsula o detector publicado como um servidor MCP stdio local:
 
 ```bash
 claude mcp add avoid-ai-writing -- npx -y avoid-ai-writing-mcp@0.1.0
 ```
 
-The server calls no model and sends no text to a network service. It
-intentionally has no rewrite tool; rewriting stays in the skill, where the
-agent can apply the full editorial rules and preservation guardrails. See the
-[MCP repository](https://github.com/conorbronsdon/avoid-ai-writing-mcp) for
-configuration examples for other MCP hosts.
-
-The engine also ships a preservation validator. `detector/validate.js` checks
-protected content and structure, including code, frontmatter, blockquotes,
-tables, inline code, URLs, paths, and headings. The default gate also blocks
-residual pattern growth for compatibility; that quality signal does not prove
-content damage. Editorial workflows use the advisory policy:
+O motor também inclui um validador de preservação (`detector/validate.js`), que verifica conteúdo e estrutura protegidos:
 
 ```bash
 node detector/validate.js --residual-policy warn before.md after.md
 ```
 
-After `npm install avoid-ai-writing-detector`, the same command is:
+**Ele passa no próprio teste?** [`PROOF.md`](./PROOF.md) pontua a documentação deste repositório com o detector deste repositório e publica o resultado. `npm run self-scan` reproduz o teste, e a CI falha quando um documento ultrapassa seu orçamento.
 
-```bash
-node node_modules/avoid-ai-writing-detector/detector/validate.js --residual-policy warn before.md after.md
-```
+## Pipeline de pré-publicação
 
-Mechanical errors still fail. Warnings and residual findings remain visible
-for review. A pass does not verify meaning; check facts and claims separately.
-See the [validator API](detector/README.md#validateoriginal-rewritten-options--result)
-for result fields, availability states, and the unchanged default gate.
-
-**Does it pass its own pass?** [`PROOF.md`](./PROOF.md) scores this repo's
-documentation with this repo's detector and publishes the result, including two
-defects the scan found in our own work. `npm run self-scan` reproduces it, and
-CI fails when a document drifts past its budget.
-
-## Pre-publish pipeline
-
-This skill answers one question: does the draft sound like a model? Run [fact-check](https://github.com/conorbronsdon/fact-check?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing) first to answer the other one: are the claims true? It pulls out the specific claims it can check (numbers, dates, names, quotes, firsts), tries to refute each against a primary source, and returns a verdict per claim. It flags and never edits, and a claim it couldn't settle is marked unverified, not passed.
-
-Run it before this skill, so the rewrite starts from claims you've already fixed. A rewrite can still change or add a claim, so check any claim that changed before you publish: the first pass covered the earlier draft, not the final text.
-
-Install both as Claude Code plugins from this repo's marketplace:
+Esta skill responde a uma pergunta: o rascunho soa como um modelo? Execute o [fact-check](https://github.com/alvarodevbr/fact-check?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing) primeiro para responder à outra: as afirmações são verdadeiras?
 
 ```text
-/plugin marketplace add conorbronsdon/avoid-ai-writing
-/plugin install avoid-ai-writing@conorbronsdon-skills
-/plugin install fact-check@conorbronsdon-skills
+/plugin marketplace add alvarodevbr/avoid-ai-writing
+/plugin install avoid-ai-writing@alvarodevbr-skills
+/plugin install fact-check@alvarodevbr-skills
 ```
-
-For other agents, clone each repo into your skills directory, as in [Installation & Usage](#installation--usage).
 
 ## House style is a different job
 
-This skill removes AI-writing tells. Enforcing a published style guide is the
-different job: it doesn't do that, and it ships no style guides of its own. The
-optional `--style` input takes a house-style config you supply: a `register` list
-the model applies, and a `mechanics` object whose checkable rules
-`scripts/check-style.js` verifies deterministically (quote form, Latin
-abbreviations, and the `colons`, `semicolons`, and `emDash: "never"` bans gate the
-exit code; heading case, the `emDash: "sparing"` rate, and number spelling
-are advisory). This script requires a cloned checkout. [`examples/`](./examples/) has the schema. You can skip the input
-entirely and put your guide in your agent's context alongside a
-[voice profile](./references/patterns.md#voice-profiles), as instructions rather than as a checked
-rule set.
+Esta skill remove sinais de escrita de IA. Aplicar um guia de estilo publicado é um trabalho diferente: ela não faz isso sozinha e não traz guias de estilo próprios embutidos. A entrada opcional `--style` aceita uma configuração de estilo da casa que você fornece: uma lista `register` que o modelo aplica, e um objeto `mechanics` cujas regras verificáveis o script `scripts/check-style.js` valida deterministicamente. [`examples/`](./examples/) contém o esquema.
 
-From a cloned checkout, after a rewrite, `node scripts/normalize-quotes.js draft.md --reference original.md`
-prints prose marks normalized to the original document's convention; add `--write`
-to save it. Explicit `--quotes straight|curly` overrides inference. It shares the
-checker's Markdown protection. See the
-[usage and limits](./examples/README.md#normalize-quote-marks-after-a-rewrite).
+A partir de um clone local, após uma reescrita, `node scripts/normalize-quotes.js draft.md --reference original.md` imprime as aspas da prosa normalizadas para a convenção do documento original; adicione `--write` para salvar. Veja o [uso e limites](./examples/README.md#normalize-quote-marks-after-a-rewrite).
 
-If you want Google, Microsoft, Red Hat, or Salesforce style checked in CI,
-[Vale](https://github.com/vale-cli/vale) already covers that. Its
-[package registry](https://github.com/vale-cli/packages) carries
-Vale-compatible implementations of those four, alongside ports of `proselint`,
-`write-good`, and `alex`. The four style-guide packages are MIT-licensed, though
-the guides they implement are not always (see the audit below); the linter ports
-vary, and proselint's is BSD-3-Clause. The two tools do different jobs and
-compose: Vale gates a document against a rule set, applying fixes one alert at a
-time, while this skill rewrites whole passages as you draft.
+Guias pagos (Chicago, APA, MLA, AP, ABNT) não possuem implementação legível por máquina aqui nem no Vale. Passar um de seus nomes para `--style` recorre ao conhecimento geral do modelo sem alegação de conformidade verificada. A [auditoria de licenças](https://github.com/alvarodevbr/avoid-ai-writing/issues/88) por trás dessa decisão é pública.
 
-Paywalled guides (Chicago, APA, MLA, AP) have no machine-readable
-implementation here or in Vale, and won't get one here. Nothing in this repo
-could verify that a rewrite is Chicago-compliant, so claiming it would fail the
-same bar [`PROOF.md`](./PROOF.md) holds every other number to. Passing one of
-their names to `--style` bundles nothing; it falls back to the model's own
-knowledge, and `SKILL.md` instructs it to say so and to claim no compliance.
-That is an instruction rather than a checked rule, which is the point: there is
-nothing here to check it against. The
-[license audit](https://github.com/conorbronsdon/avoid-ai-writing/issues/88)
-behind that line is public.
+## Mais projetos
 
-## More from me
+[Siga Alvaro Araujo no GitHub](https://github.com/alvarodevbr) para novas ferramentas e exemplos práticos:
 
-I run agents against my own email, money, and publishing, so I build the
-guardrails first.
+- [What I'm building](https://alvarodevbr.com/builds/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing) — projetos públicos em skills de agentes, servidores MCP, ferramentas para criadores e Mojo.
+- [Chain of Thought](https://chainofthought.show/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing) — conversas com quem está colocando sistemas de IA em produção.
+- [repo-audit](https://github.com/alvarodevbr/repo-audit) — verifica se as afirmações de um repositório são aplicadas, consultivas ou orientativas.
 
-[Follow me on GitHub](https://github.com/conorbronsdon) for new tools and practical examples from maintaining them.
+## Créditos
 
-- [What I'm building](https://conorbronsdon.com/builds/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing) — public projects across agent skills, MCP servers, creator tools, and Mojo.
-- [Chain of Thought](https://chainofthought.show/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing) — conversations with the people shipping AI systems.
-- [repo-audit](https://github.com/conorbronsdon/repo-audit) — checks whether repository claims are enforced, advisory, or guidance.
+Pesquisa de padrões informada por:
+- Pesquisa de detecção de IA da [Pangram Labs](https://www.pangram.com/)
+- Documentação [Signs of AI-generated text](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) da Wikipédia
+- Skill Claude Code [blader/humanizer](https://github.com/blader/humanizer)
+- [brandonwise/humanizer](https://github.com/brandonwise/humanizer) — sistema de vocabulário em camadas e pesquisa de análise estatística
+- Ecossistema de skills humanizer do [OpenClaw](https://github.com/openclaw/openclaw)
 
-## Credits
-
-Pattern research informed by:
-- [Pangram Labs](https://www.pangram.com/) AI detection research — structural regularity insights, vocabulary flags from a decoder-only classifier trained on 28M human documents
-- Wikipedia's [Signs of AI-generated text](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) documentation — the canonical reference for AI writing tells, maintained by Wikipedia editors
-- [blader/humanizer](https://github.com/blader/humanizer) Claude Code skill
-- [brandonwise/humanizer](https://github.com/brandonwise/humanizer) — tiered vocabulary system, statistical analysis research (burstiness, sentence length variation, trigram repetition), and rewrite philosophy
-- [OpenClaw](https://github.com/openclaw/openclaw) humanizer skill ecosystem — community patterns and vocabulary research
-
-Pull requests get an automated first-pass review from [Qodo Merge](https://github.com/marketplace/qodo-merge-pro-for-open-source), free through Qodo's open source program. Thanks to the Qodo team for supporting OSS maintainers.
-
-Authored by [Conor Bronsdon](https://github.com/conorbronsdon) · [LinkedIn](https://www.linkedin.com/in/conorbronsdon/) · [Chain of Thought podcast](https://chainofthought.show/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing)
+Autoria original de [Alvaro Araujo](https://github.com/alvarodevbr) · [LinkedIn](https://www.linkedin.com/in/alvarodevbr/) · [Podcast Chain of Thought](https://chainofthought.show/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=avoid-ai-writing)
 
 ## Community / Multilingual
 
-Community-maintained adaptations are linked here for discovery. Their authors own their rules, evidence, releases, and support; a link does not mean this repository maintains or validates their results.
+Adaptações mantidas pela comunidade são listadas aqui para descoberta:
 
-- **[avoid-ai-writing-multilingual](https://github.com/jurigis/avoid-ai-writing-multilingual)** by [Jürgen Kraus](https://github.com/jurigis) — German (`SKILL-DE.md`), French (`SKILL-FR.md`), Italian (`SKILL-IT.md`), Romanian (`SKILL-RO.md`), and Swedish (`SKILL-SV.md`) adaptations, grounded in native-language research rather than translated from English.
-- **[evitar-escrita-ia](https://github.com/mariorabeloneto/evitar-escrita-ia)** by [Mário Rabelo Neto](https://github.com/mariorabeloneto) — European Portuguese adaptation with dialect and formal-register guidance. Its vocabulary tables are editorial hypotheses, not corpus measurements.
+- **[avoid-ai-writing-multilingual](https://github.com/jurigis/avoid-ai-writing-multilingual)** por [Jürgen Kraus](https://github.com/jurigis) — adaptações para alemão (`SKILL-DE.md`), francês (`SKILL-FR.md`), italiano (`SKILL-IT.md`), romeno (`SKILL-RO.md`) e sueco (`SKILL-SV.md`).
+- **[evitar-escrita-ia](https://github.com/mariorabeloneto/evitar-escrita-ia)** por [Mário Rabelo Neto](https://github.com/mariorabeloneto) — adaptação para Português Europeu (PT-PT).
 
-Built an adaptation? See the [language adaptation guidance](CONTRIBUTING.md#language-adaptations), then open an issue with the language, dialect, maintainer, evidence, limitations, and link. We can link independent versions without taking over their maintenance.
+Construiu uma adaptação? Veja a [orientação de adaptação de idioma](CONTRIBUTING.md#language-adaptations).
 
-## Official sources and sponsorship
+## Fontes oficiais e patrocínio
 
-I publish this project through these channels only:
+Canais oficiais do projeto upstream:
+- Este repositório, [`alvarodevbr/avoid-ai-writing`](https://github.com/alvarodevbr/avoid-ai-writing), incluindo seus [releases](https://github.com/alvarodevbr/avoid-ai-writing/releases)
+- [ClawHub](https://clawhub.ai/alvarodevbr/avoid-ai-writing)
+- [OpenAI Plugins Directory](https://chatgpt.com/plugins/plugins_6a9b77b18b8881918efa9c1255868164)
+- npm: [`avoid-ai-writing-detector`](https://www.npmjs.com/package/avoid-ai-writing-detector) e [`avoid-ai-writing-mcp`](https://www.npmjs.com/package/avoid-ai-writing-mcp)
 
-- This repository, [`conorbronsdon/avoid-ai-writing`](https://github.com/conorbronsdon/avoid-ai-writing), including its [releases](https://github.com/conorbronsdon/avoid-ai-writing/releases) and the Claude plugin marketplace it hosts
-- [ClawHub](https://clawhub.ai/conorbronsdon/avoid-ai-writing)
-- The [OpenAI Plugins Directory](https://chatgpt.com/plugins/plugins_6a9b77b18b8881918efa9c1255868164)
-- npm: [`avoid-ai-writing-detector`](https://www.npmjs.com/package/avoid-ai-writing-detector) and [`avoid-ai-writing-mcp`](https://www.npmjs.com/package/avoid-ai-writing-mcp)
+**Sem inserções pagas.** A skill, o catálogo de padrões, o detector e a documentação não contêm menções pagas, links patrocinados ou recomendações comerciais de produtos.
 
-Skill directories and catalogs that copy `SKILL.md` from this repository are run by other people. They can fall behind the latest release, so compare the `version` in their copy's frontmatter with the [latest release](https://github.com/conorbronsdon/avoid-ai-writing/releases/latest). I don't control those pages and can't sell space on them.
-
-**No paid placements.** The skill, pattern catalog, detector, and docs contain no paid mentions, links, or product recommendations, and I decline requests to add them.
-
-**Sponsorship.** If this project saves you or your team time, you can support it through [GitHub Sponsors](https://github.com/sponsors/conorbronsdon). Company sponsors get a disclosed acknowledgment in this README. Sponsorship buys no say over rules, categories, detector output, or recommendations. Products whose main purpose is AI-text detection or getting past detectors aren't a fit, because the skill's flags are signals, not proof of authorship.
+**Patrocínio.** Você pode apoiar o projeto através do [GitHub Sponsors](https://github.com/sponsors/alvarodevbr).
 
 ---
 
-## Disclaimer
+## Aviso legal
 
-*This is an independent personal project, not affiliated with, sponsored by, or endorsed by any company. All views expressed are my own.*
+*Este é um projeto pessoal independente, não afiliado, patrocinado ou endossado por nenhuma empresa. Todas as opiniões expressas são do autor.*
 
-## License
+## Licença
 
 MIT

@@ -2,100 +2,90 @@
 name: ai-writing-detector
 version: 3.39.1
 license: MIT
-description: Use when the user asks to detect, scan, audit, score, or flag AI-writing patterns without rewriting the text, including requests for a deterministic local detector result when the host can execute Node.
+description: Use quando o usuário pedir para detectar, escanear, auditar, pontuar ou sinalizar padrões de escrita de IA sem reescrever o texto, incluindo pedidos de um resultado determinístico do detector local quando o host puder executar Node.
 ---
 
 # AI Writing Detector
 
-Run a detect-only review using the original Avoid AI Writing rules. Never rewrite unless the user changes the request.
+Execute uma revisão somente de detecção usando as regras originais do Avoid AI Writing. Nunca reescreva a menos que o usuário altere o pedido.
 
-## Authority
+## Autoridade
 
-The canonical rulebook is `../avoid-ai-writing/SKILL.md`. Its cautions about false positives, context, protected material, and authorship claims apply here.
+O livro de regras canônico é `../avoid-ai-writing/SKILL.md`. Suas ressalvas sobre falsos positivos, contexto, material protegido e alegações de autoria se aplicam aqui.
 
-For cross-Skill work, follow `../avoid-ai-writing-router/references/handoff-contract.md` and the typed edges in `../avoid-ai-writing-router/references/skill-graph.json`.
+Para trabalho entre Skills, siga `../avoid-ai-writing-router/references/handoff-contract.md` e as arestas tipadas em `../avoid-ai-writing-router/references/skill-graph.json`.
 
 ## Connection contract
 
-### Incoming
+### Entrada (Incoming)
 
-Accept detector work from:
+Aceite trabalho de detecção vindo de:
 
-- `avoid-ai-writing-router` via `ROUTE` for detect-only requests, the audit stage of a multi-stage request, or fresh signal collection after another terminal stage returns control to the router.
-- `preservation-verifier` via bounded `RECHECK` only when convergence or residual auditing was part of the request.
+- `avoid-ai-writing-router` via `ROUTE` para pedidos somente de detecção, a etapa de auditoria de um pedido de múltiplas etapas ou nova coleta de sinais depois que outra etapa terminal devolve o controle ao roteador.
+- `preservation-verifier` via `RECHECK` limitado apenas quando convergência ou auditoria residual fizer parte do pedido.
 
-Do not accept a direct handoff from `false-positive-reviewer`. That Skill is terminal in the graph and must return control to `avoid-ai-writing-router` when fresh signal collection is needed. This prevents a reviewer-detector cycle.
+Do not accept a direct handoff from `false-positive-reviewer`. Essa Skill é terminal no grafo e deve devolver o controle a `avoid-ai-writing-router` quando uma nova coleta de sinais for necessária. Isso evita um ciclo entre revisor e detector.
 
-Carry forward the canonical `context_profile` separately from the detector's `context_mode`, along with protected constraints, pass state, and risk flags. Do not collapse or reset them.
+Leve adiante o `context_profile` canônico separadamente do `context_mode` do detector, junto com restrições protegidas, estado de passagens e flags de risco. Não os colapse nem reinicie.
 
-### Produce
+### Produção (Produce)
 
-Update the handoff envelope with:
+Atualize o envelope de handoff com:
 
-- `execution_evidence.detector`: `executed` only if the bundled detector actually ran, otherwise `model_only`.
-- `detector_summary.score` and `label` only when produced by executed detector code.
-- `detector_summary.issue_types` from actual findings.
-- any `consequential_authorship_claim` risk flag observed in the user's request.
+- `execution_evidence.detector`: `executed` somente se o detector empacotado realmente rodou, caso contrário `model_only`.
+- `detector_summary.score` e `label` somente quando produzidos pelo código executado do detector.
+- `detector_summary.issue_types` a partir dos achados reais.
+- qualquer flag de risco `consequential_authorship_claim` observada no pedido do usuário.
 
-### Outgoing
+### Saída (Outgoing)
 
-- `FEED` findings to `voice-preserving-rewriter` only when the user also requested returned-text rewriting.
-- `FEED` findings to `file-edit-in-place` only when the user explicitly requested mutation of a named file.
-- `ESCALATE` to `false-positive-reviewer` when the user asks what the findings can establish about authorship or another consequential conclusion.
-- Otherwise stop after the detect-only result.
+- `FEED` achados para `voice-preserving-rewriter` apenas quando o usuário também solicitou reescrita de texto retornado.
+- `FEED` achados para `file-edit-in-place` apenas quando o usuário solicitou explicitamente a alteração de um arquivo nomeado.
+- `ESCALATE` para `false-positive-reviewer` quando o usuário perguntar o que os achados podem comprovar sobre autoria ou outra conclusão de grande impacto.
+- Caso contrário, pare após o resultado somente de detecção.
 
-Deterministic hits are candidate matches. Keep the engine's public issue types
-and scores intact, then apply the canonical context exceptions and pass
-conditions when deciding which hits are justified editorial findings. Neither
-kind of result is a mandatory edit instruction or authorizes a mutation.
+Acertos determinísticos são correspondências candidatas. Mantenha os tipos públicos de problemas e as pontuações do motor intactos e aplique as exceções de contexto e condições de aprovação canônicas ao decidir quais acertos são achados editoriais justificados.
 
-## AI-engineering evidence lens
+## Lente de evidência de engenharia de IA
 
-Apply the `agency-ai-engineer` lens encoded in `../avoid-ai-writing-router/references/agency-role-lenses.md`:
+Aplique a lente `agency-ai-engineer` codificada em `../avoid-ai-writing-router/references/agency-role-lenses.md`:
 
-- keep deterministic output separate from model-only observations,
-- preserve the selected context profile and detector mode through downstream handoffs,
-- treat score and label as signals rather than ground truth,
-- consider false positives and genre/register effects,
-- never convert pattern detection into an authorship classifier claim.
+- mantenha a saída determinística separada das observações apenas do modelo (*model-only*),
+- preserve o perfil de contexto selecionado e o modo do detector nos handoffs seguintes,
+- trate pontuação e rótulo como sinais e não como verdade absoluta,
+- considere falsos positivos e efeitos de gênero/registro,
+- nunca converta detecção de padrões em uma afirmação de classificador de autoria.
 
-## Preferred path
+## Caminho preferencial
 
-When the current host can execute Node safely:
+Quando o host atual puder executar Node com segurança:
 
-1. Pass the supplied text to `scripts/detect.js`.
-2. Use `--context technical` for code-adjacent or technical prose when appropriate. Otherwise use `general`.
-3. Use `--source-mode rendered-markdown` for Markdown that carries YAML frontmatter or HTML comments, so unedited metadata is not scored as the author's prose. Otherwise leave the default `plain`.
-4. Report the detector's score, label, issue types, severity, matched text, and suggestions.
-5. Separate deterministic candidate matches from justified editorial findings and observations that only exist in the full rulebook.
-6. Never claim execution unless the command actually ran.
+1. Passe o texto fornecido para `scripts/detect.js`.
+2. Use `--context technical` para prosa técnica ou próxima a código quando apropriado. Caso contrário, use `general`.
+3. Use `--source-mode rendered-markdown` para Markdown que contenha YAML frontmatter ou comentários HTML. Caso contrário, mantenha o padrão `plain`.
+4. Relate a pontuação, o rótulo, os tipos de problema, a gravidade, o texto correspondente e as sugestões do detector.
+5. Separe correspondências candidatas determinísticas de achados editoriais justificados e observações que só existem no livro de regras completo.
+6. Nunca afirme que houve execução a menos que o comando tenha realmente rodado.
 
-Example:
+Exemplo:
 
 ```bash
 printf '%s' "$TEXT" | node scripts/detect.js --context general
 ```
 
-For a file:
+Para um arquivo:
 
 ```bash
 node scripts/detect.js --file path/to/draft.md --context general
-```
-
-For Markdown with frontmatter or HTML comments:
-
-```bash
 node scripts/detect.js --file path/to/draft.md --source-mode rendered-markdown
 ```
 
-If Node or shell execution is unavailable, perform the detect-only workflow from the canonical `avoid-ai-writing` Skill and explicitly say the deterministic detector was not run.
+Se a execução do Node ou shell estiver indisponível, realize o fluxo somente de detecção a partir da Skill canônica `avoid-ai-writing` e diga explicitamente que o detector determinístico não foi executado.
 
-## Stop conditions
+## Condições de parada
 
-Stop here when the request is detect-only. Do not continue into rewrite, file mutation, or interpretation merely because those Skills are available.
+Pare aqui quando o pedido for somente de detecção. Não continue para reescrita, alteração de arquivo ou interpretação apenas porque essas Skills estão disponíveis.
 
-A residual `RECHECK` may run once when requested. It is read-only and does not consume an editing pass; any change it prompts must fit within the requested editing-pass limit, capped at two, and the graph's loop policy.
+## Saída
 
-## Output
-
-Return the overall label and score when executed, detected candidate matches grouped by severity, a short contextual assessment that distinguishes justified findings from plausible false positives, execution status, and no rewritten version unless control has explicitly passed to a rewrite owner.
+Retorne o rótulo geral e a pontuação quando executado, correspondências candidatas detectadas agrupadas por gravidade, uma breve avaliação contextual que distinga achados justificados de falsos positivos plausíveis, status de execução e nenhuma versão reescrita, a menos que o controle tenha passado explicitamente para um responsável por reescrita.

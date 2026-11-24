@@ -124,7 +124,7 @@ body = replace_once(
 )
 
 cursor_fm = f"""---
-description: {description} Activate whenever editing prose-heavy files (Markdown, documentation, blog posts, READMEs, release notes, emails). Cursor port of the avoid-ai-writing skill v{version}. See https://github.com/conorbronsdon/avoid-ai-writing.
+description: {description} Activate whenever editing prose-heavy files (Markdown, documentation, blog posts, READMEs, release notes, emails). Cursor port of the avoid-ai-writing skill v{version}. See https://github.com/alvarodevbr/avoid-ai-writing.
 globs: ["**/*.md", "**/*.mdx", "**/*.txt", "**/*.rst", "**/*.adoc"]
 alwaysApply: false
 ---
@@ -201,8 +201,8 @@ MUST_PASS = (
     "docs/technical-blog is a context pair",
     "examples/counterexamples and transcripts/notes",
     "superscripts/subscripts",
-    "https://github.com/conorbronsdon/avoid-ai-writing/blob/main/scripts/check-style.js",
-    "[scripts/check-style.js](https://github.com/conorbronsdon/avoid-ai-writing/blob/main/scripts/check-style.js)",
+    "https://github.com/alvarodevbr/avoid-ai-writing/blob/main/scripts/check-style.js",
+    "[scripts/check-style.js](https://github.com/alvarodevbr/avoid-ai-writing/blob/main/scripts/check-style.js)",
     # A bare dotfile is not one of this repo's files; the #110 review ruled the
     # behavior correct and the old claim about it wrong, so it lives here now.
     "examples/.json",

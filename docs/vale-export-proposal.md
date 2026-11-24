@@ -11,7 +11,7 @@ draft below is kept as written, so its commands and links to the sample no longe
 Original status: proposal for maintainer and contributor review. This adds a sample data
 export and JS validation fixture, not a Vale style or a supported export API.
 
-The [October 18 contributor comment](https://github.com/conorbronsdon/avoid-ai-writing/issues/94#issuecomment-6244779071)
+The [October 18 contributor comment](https://github.com/alvarodevbr/avoid-ai-writing/issues/94#issuecomment-6244779071)
 reports an existing prototype and asks for frozen pattern tables. That first
 claim stays with the contributor. This proposal does not reproduce the port,
 validate its measurements, or assign its files to another author.

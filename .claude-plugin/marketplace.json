@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "conorbronsdon-skills",
-  "description": "Conor Bronsdon's public Claude Code / Cowork skills.",
+  "name": "alvarodevbr-skills",
+  "description": "Alvaro Araujo's public Claude Code / Cowork skills.",
   "owner": {
-    "name": "Conor Bronsdon"
+    "name": "Alvaro Araujo"
   },
   "plugins": [
     {
@@ -22,7 +22,7 @@
       "name": "fact-check",
       "source": {
         "source": "github",
-        "repo": "conorbronsdon/fact-check"
+        "repo": "alvarodevbr/fact-check"
       },
       "description": "Check the specific claims in a draft before it ships: extract numbers, dates, names, quotes and firsts, try to refute each against primary sources, return a verdict per claim. Flags, never edits.",
       "category": "productivity",

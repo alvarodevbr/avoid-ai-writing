@@ -1,55 +1,55 @@
-# avoid-ai-writing: agent instructions
+# avoid-ai-writing: instruções para agentes
 
-The repository contract for every agent runtime. Codex and other runtimes read this file directly; Claude Code reads it through `CLAUDE.md`, which imports it.
+O contrato do repositório para todos os ambientes de execução de agentes. O Codex e outros ambientes leem este arquivo diretamente; o Claude Code o lê por meio de `CLAUDE.md`, que o importa.
 
-## What this is
+## O que é isto
 
-A directory-based writing skill (`SKILL.md` plus `references/patterns.md`) that audits and rewrites content to remove AI writing patterns. The skill is a markdown file consumed by AI coding assistants; the repository also includes a dependency-free deterministic detector and test suite.
+Uma skill de escrita baseada em diretório (`SKILL.md` mais `references/patterns.md`) que audita e reescreve conteúdos para remover padrões de escrita de IA, traduzida e adaptada para o Português Brasileiro (PT-BR) com compatibilidade bilíngue. A skill é um arquivo Markdown consumido por assistentes de programação com IA; o repositório também inclui um detector determinístico sem dependências e uma suíte de testes.
 
-## Repository structure
+## Estrutura do repositório
 
-- `SKILL.md` — entry instructions, severity tiers, preservation rules, and output formats.
-- `references/patterns.md` — canonical word tiers, catalog, context and voice profiles.
-- `SKILL.full.md` — generated full source for comparison and self-scan.
-- `dist/avoid-ai-writing.md` — generated portable paste instructions.
-- `README.md` — public-facing docs, installation instructions, pattern reference table, full before/after example.
-- `CHANGELOG.md` — version history with what changed and why.
+- `SKILL.md` — instruções de entrada, níveis de gravidade, regras de preservação e formatos de saída.
+- `references/patterns.md` — camadas canônicas de vocabulário, catálogo, perfis de contexto e de voz.
+- `SKILL.full.md` — fonte completa gerada para comparação e autoverificação (`self-scan`).
+- `dist/avoid-ai-writing.md` — instruções portáteis geradas para colagem direta.
+- `README.md` — documentação pública, instruções de instalação, tabela de referência de padrões, exemplo completo antes/depois.
+- `CHANGELOG.md` — histórico de versões com o que mudou e por quê.
 
-## How to make changes
+## Como fazer alterações
 
-Edit `SKILL.md` and `references/patterns.md` directly. When making changes:
+Edite `SKILL.md` e `references/patterns.md` diretamente. Ao fazer alterações:
 
-- Follow the [changelog and versioning policy](CONTRIBUTING.md#changelog-and-versioning): add an Unreleased entry for user-facing changes; routine docs corrections, tests, and maintenance with no user-facing effect need no entry or version bump.
-- When preparing a release, update the SKILL.md frontmatter (`version: X.Y.Z`), `package.json`, and the dated changelog heading. Update the same version manually in the three plugin manifests before syncing:
+- Siga a [política de changelog e versionamento](CONTRIBUTING.md#changelog-and-versioning): adicione uma entrada em `Unreleased` para mudanças visíveis ao usuário; correções rotineiras de documentação, testes e manutenção sem efeito visível ao usuário não precisam de entrada nem de aumento de versão.
+- Ao preparar um lançamento, atualize o frontmatter do `SKILL.md` (`version: X.Y.Z`), o `package.json` e o cabeçalho datado do changelog. Atualize a mesma versão manualmente nos três manifestos de plugin antes de sincronizar:
   - `plugins/avoid-ai-writing/.claude-plugin/plugin.json`
   - `plugins/avoid-ai-writing/.antigravity-plugin/plugin.json`
   - `.codex-plugin/plugin.json`
-- Update the same version in the six hand-written `skills/*/SKILL.md` frontmatters (all but the generated `skills/avoid-ai-writing/SKILL.md`). `python3 scripts/validate-openai-plugin.py . --json` fails when one differs from the OpenAI manifest.
-- Run `bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh`. The first script validates all three manifest versions and the `package.json` version against `SKILL.md` and regenerates bundled skill copies, detector resources, scripts, and examples; the second regenerates the portable paste/Cursor artifacts. Neither script generates the manifest versions. A mismatch fails with messages such as `version mismatch: SKILL.md=X Claude plugin=Y`, `version mismatch: SKILL.md=X OpenAI plugin=Y`, `version mismatch: SKILL.md=X Antigravity plugin=Y`, or `version mismatch: SKILL.md=X package.json=Y`.
-- Run `npm test` to exercise the detector, category contract, validator, corpus helpers, and style checks.
-- Update README.md if the change affects installation, usage, feature list, or pattern count
-- The pattern count is canonical in the README "74 pattern categories" bullet (derived from references/patterns.md's detection `###` entries). This bullet quotes that number here as a **checked copy** for agent context — update README and this sentence when you add or remove a detection category. Don't restate the count elsewhere; CI (`scripts/check-pattern-count.sh`) fails if either literal drifts from `references/patterns.md`.
+- Atualize a mesma versão nos seis frontmatters escritos à mão em `skills/*/SKILL.md` (todos exceto o gerado `skills/avoid-ai-writing/SKILL.md`). `python3 scripts/validate-openai-plugin.py . --json` falha quando um deles difere do manifesto da OpenAI.
+- Execute `bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh`. O primeiro script valida as versões dos três manifestos e do `package.json` contra o `SKILL.md` e regenera cópias empacotadas da skill, recursos do detector, scripts e exemplos; o segundo regenera os artefatos portáteis para colagem e Cursor. Nenhum dos scripts gera as versões dos manifestos.
+- Execute `npm test` para exercitar o detector, contrato de categorias, validador, utilitários de corpus e verificações de estilo.
+- Atualize o `README.md` se a mudança afetar instalação, uso, lista de recursos ou contagem de padrões.
+- A contagem de padrões é canônica no item do README "74 pattern categories" bullet (derivado das entradas de detecção `###` de `references/patterns.md`). Este item cita esse número aqui como uma **cópia verificada** para contexto do agente — atualize o README e esta frase quando adicionar ou remover uma categoria de detecção. Não repita a contagem em outros lugares; a CI (`scripts/check-pattern-count.sh`) falha se qualquer um dos literais divergir de `references/patterns.md`.
 
-## Architecture of the skill
+## Arquitetura da skill
 
-The skill has three modes (`rewrite` default, `detect` flag-only, `edit` in-place) and processes text through this pipeline:
+A skill possui três modos (`rewrite` por padrão, `detect` apenas sinalização, `edit` edição local) e processa o texto por este pipeline:
 
-1. **Context profile detection** — auto-detects or accepts a profile hint (linkedin, blog, technical-blog, investor-email, docs, casual) that adjusts rule strictness via the tolerance matrix
-2. **Pattern matching** — detection categories across content, language, structure, communication, and meta patterns (see references/patterns.md for the catalog; the count is in the README bullet)
-3. **Vocabulary flagging** — 3-tier system: Tier 1 (always flag), Tier 2 (flag in clusters), Tier 3 (flag at high density)
-4. **Severity classification** — P0 (credibility killers), P1 (obvious AI smell), P2 (stylistic polish)
-5. **Output** — rewrite mode: one final rewrite, useful change summary, and verification; detailed findings on request. Detect mode: findings and assessment
+1. **Detecção de perfil de contexto** — autodetecta ou aceita uma dica de perfil (`linkedin`, `blog`, `technical-blog`, `investor-email`, `docs`, `casual`) que ajusta o rigor das regras por meio da matriz de tolerância
+2. **Correspondência de padrões** — categorias de detecção abrangendo padrões de conteúdo, linguagem, estrutura, comunicação e metapadrões (veja `references/patterns.md` para o catálogo; a contagem está no item do README)
+3. **Sinalização de vocabulário** — sistema de 3 camadas: Tier 1 (sempre revisar), Tier 2 (sinalizar em agrupamentos), Tier 3 (sinalizar em alta densidade)
+4. **Classificação de gravidade** — P0 (destruidores de credibilidade), P1 (cheiro óbvio de IA), P2 (polimento estilístico)
+5. **Saída** — modo `rewrite`: uma reescrita final única, resumo útil de alterações e verificação; achados detalhados mediante solicitação. Modo `detect`: achados e avaliação
 
-## Key constraints
+## Restrições principais
 
-- Keep the entry SKILL.md under 500 lines with agentskills.io-compatible frontmatter; preserve all rule text in the reference and generated artifacts.
-- Run `bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh` after canonical edits. Never edit generated copies.
-- Word replacement table entries need specific alternatives, not just "rephrase"
-- The self-reference escape hatch (quoted examples exempt from flagging) must be preserved — without it the skill flags its own documentation
-- Technical-blog profile has explicit word table exceptions (e.g., "robust" and "ecosystem" are legitimate in technical contexts)
-- "Extra strict" and "skip" in the tolerance matrix have specific meanings defined in the file
-- The `ai-writing-skill-field-guide` survey ranks this repo first on upkeep, and its author filed #12 here. Any public citation of that ranking has to carry the disclosure with it
+- Mantenha o arquivo de entrada `SKILL.md` abaixo de 500 linhas com frontmatter compatível com agentskills.io; preserve todo o texto das regras na referência e nos artefatos gerados.
+- Execute `bash scripts/sync-plugin-skill.sh && bash scripts/sync-cursor-rules.sh` após edições canônicas. Nunca edite cópias geradas.
+- As entradas da tabela de substituição de palavras precisam de alternativas específicas, não apenas "reformule".
+- A válvula de escape de autorreferência (exemplos entre aspas isentos de sinalização) deve ser preservada — sem ela, a skill sinaliza sua própria documentação.
+- O perfil `technical-blog` tem exceções explícitas na tabela de palavras (ex.: "robust"/"robusto" e "ecosystem"/"ecossistema" são legítimos em contextos técnicos).
+- "Extra strict" e "skip" na matriz de tolerância têm significados específicos definidos no arquivo.
+- O levantamento `ai-writing-skill-field-guide` classifica este repositório em primeiro lugar em manutenção, e seu autor abriu a issue #12 aqui. Qualquer citação pública desse ranking deve trazer essa divulgação junto.
 
-## Compatibility
+## Compatibilidade
 
-The skill works with Claude Code, OpenClaw/ClawHub, and any agentskills.io-compatible agent. The frontmatter includes both `agentskills_spec` and `openclaw` fields. Changes must not break either format.
+A skill funciona com Claude Code, OpenClaw/ClawHub e qualquer agente compatível com agentskills.io. O frontmatter inclui os campos `agentskills_spec` e `openclaw`. As alterações não devem quebrar nenhum dos formatos.

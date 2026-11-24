@@ -1,6 +1,6 @@
 {
   "source": {
-    "repository": "https://github.com/conorbronsdon/avoid-ai-writing",
+    "repository": "https://github.com/alvarodevbr/avoid-ai-writing",
     "baseCommit": "d8c235186ff764ac20a0464ca8b1a13993ea37e4",
     "version": "3.39.1",
     "architecture": "skills-only"
@@ -10,11 +10,11 @@
     "subtitle": "Detect and rewrite AI-isms",
     "description": "Audit writing for recurring AI-like patterns, rewrite only what needs changing, preserve the writer's voice and source facts, edit named files with narrow changes, and verify that protected material such as code, quotes, links, numbers, frontmatter, and tables survives the edit. The package keeps the original Avoid AI Writing skill intact and adds focused ChatGPT and Codex routing for detect-only review, voice-preserving rewrites, file edits, preservation checks, and false-positive review. Its signals are writing-quality indicators, not proof of AI authorship.",
     "category": "Productivity",
-    "developerName": "Conor Bronsdon",
-    "websiteURL": "https://github.com/conorbronsdon/avoid-ai-writing",
-    "supportURL": "https://github.com/conorbronsdon/avoid-ai-writing/issues",
-    "privacyPolicyURL": "https://github.com/conorbronsdon/avoid-ai-writing/blob/main/PRIVACY.md",
-    "termsOfServiceURL": "https://github.com/conorbronsdon/avoid-ai-writing/blob/main/TERMS.md",
+    "developerName": "Alvaro Araujo",
+    "websiteURL": "https://github.com/alvarodevbr/avoid-ai-writing",
+    "supportURL": "https://github.com/alvarodevbr/avoid-ai-writing/issues",
+    "privacyPolicyURL": "https://github.com/alvarodevbr/avoid-ai-writing/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/alvarodevbr/avoid-ai-writing/blob/main/TERMS.md",
     "version": "3.39.1",
     "packageName": "avoid-ai-writing",
     "capabilities": ["AI-pattern audit","Detect-only review","Voice-preserving rewrite","Targeted file editing","Preservation verification","False-positive review","Multi-step writing cleanup"],
@@ -36,8 +36,8 @@
     "capabilityCharacters": [16,18,24,21,25,21,26]
   },
   "publisherIdentity": {
-    "packagePublisher": "Conor Bronsdon",
-    "originalProjectAuthor": "Conor Bronsdon",
+    "packagePublisher": "Alvaro Araujo",
+    "originalProjectAuthor": "Alvaro Araujo",
     "packagingContributor": "Mamdouh Aboammar",
     "openAIVerifiedDeveloperStatus": "verified individual identity, confirmed in the portal 2026-09-04"
   },

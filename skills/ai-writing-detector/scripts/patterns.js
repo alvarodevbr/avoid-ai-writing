@@ -2186,8 +2186,261 @@ const AIDetector = (() => {
   // ═══ Helpers ═══════════════════════════════════════════════════════
 
   function tokenize(text) {
-    return text.toLowerCase().match(/[\w'-]+/g) || [];
+    return text.toLowerCase().match(/[\wÀ-ÖØ-öø-ÿ'-]+/g) || [];
   }
+
+  // ─── PT-BR idiomatic pattern extensions ────────────────────────────
+  // Executed inside analyzeText while keeping PATTERN_TABLES pinned to the
+  // canonical export schema expected by Vale and downstream tooling.
+  const PTBR_TECHNICAL_EXEMPT = new Set([
+    'robusto', 'robusta', 'robustos', 'robustas',
+    'abrangente', 'abrangentes',
+    'ecossistema', 'ecossistemas',
+    'alavancar', 'alavanca', 'alavancando', 'alavancado',
+    'facilitar', 'facilita', 'facilitam',
+    'embasar', 'embasa',
+    'otimizar', 'otimiza',
+  ]);
+
+  const PTBR_TIER1 = {
+    'desbravar': 'explorar, analisar, examinar',
+    'desbravando': 'explorando, analisando',
+    'tapeçaria': 'estrutura complexa, história',
+    'paradigma': 'modelo, abordagem',
+    'robusto': 'forte, confiável, sólido',
+    'robusta': 'forte, confiável, sólida',
+    'abrangente': 'completo, detalhado',
+    'alavancar': 'usar, aproveitar',
+    'alavancando': 'usando, aproveitando',
+    'meticuloso': 'cuidadoso, detalhado, preciso',
+    'meticulosa': 'cuidadosa, detalhada, precisa',
+    'meticulosamente': 'com cuidado, com precisão',
+    'aninhado': 'localizado, situado',
+    'aninhada': 'localizada, situada',
+    'vibrante': 'ativo, movimentado',
+    'intrincado': 'complexo, detalhado',
+    'intrincada': 'complexa, detalhada',
+    'holístico': 'completo, integrado',
+    'holística': 'completa, integrada',
+    'holisticamente': 'de forma completa, integralmente',
+    'acionável': 'prático, útil, concreto',
+    'acionáveis': 'práticos, úteis, concretos',
+    'impactante': 'eficaz, importante',
+    'sinergia': 'efeito combinado, colaboração',
+    'sinergias': 'efeitos combinados, colaboração',
+    'sinfonia': 'coordenação, equilíbrio',
+  };
+
+  const PTBR_TIER1_PHRASES = [
+    { pattern: /\bmergulhar\s+(?:fundo\s+)?(?:em|no|na|nos|nas)\b/gi, replace: 'explorar, analisar, examinar' },
+    { pattern: /\bmergulho\s+profundo\b/gi, replace: 'análise detalhada, exame' },
+    { pattern: /\bdivisor\s+de\s+águas\b/gi, replace: 'ponto de virada, mudança' },
+    { pattern: /\bmarcando\s+um\s+momento\s+(?:crucial|decisivo|histórico)\b/gi, replace: 'mudando [X], levando a [Y]' },
+    { pattern: /\bo\s+futuro\s+parece\s+(?:brilhante|promissor)\b/gi, replace: 'corte ou diga algo específico' },
+    { pattern: /\bsó\s+o\s+tempo\s+dirá\b/gi, replace: 'corte ou diga algo específico' },
+    { pattern: /\bapesar\s+dos\s+desafios[^.]*continua\s+a\s+prosperar\b/gi, replace: 'continua crescendo apesar de [dificuldade nomeada]' },
+    { pattern: /\bem\s+constante\s+evolução\b/gi, replace: 'em mudança, que muda' },
+    { pattern: /\bem\s+sua\s+essência\b/gi, replace: 'corte — vá direto ao ponto' },
+    { pattern: /\bno\s+seu\s+cerne\b/gi, replace: 'corte — vá direto ao ponto' },
+    { pattern: /\bum\s+testemunho\s+d[eo]\b/gi, replace: 'mostra, prova, demonstra' },
+    { pattern: /\ba\s+fim\s+de\b/gi, replace: 'para', clarity: true },
+    { pattern: /\bcom\s+o\s+intuito\s+de\b/gi, replace: 'para', clarity: true },
+    { pattern: /\bdevido\s+ao\s+fato\s+de\s+que\b/gi, replace: 'porque', clarity: true },
+    { pattern: /\bserve\s+como\b/gi, replace: 'é', clarity: true },
+    { pattern: /\bconta\s+com\b/gi, replace: 'tem, inclui', clarity: true },
+    { pattern: /\bostenta\b/gi, replace: 'tem', clarity: true },
+    { pattern: /\butilizar\b/gi, replace: 'usar', clarity: true },
+    { pattern: /\butilizando\b/gi, replace: 'usando', clarity: true },
+  ];
+
+  const PTBR_TIER2 = {
+    'fomentar': 'incentivar, apoiar, criar',
+    'fomenta': 'incentiva, apoia, cria',
+    'fomentando': 'incentivando, apoiando',
+    'impulsionar': 'acelerar, apoiar',
+    'desencadear': 'liberar, permitir, iniciar',
+    'empoderar': 'permitir, dar autonomia',
+    'empoderando': 'permitindo, dando autonomia',
+    'encabeçar': 'liderar, conduzir',
+    'ressoar': 'conectar-se com, fazer sentido',
+    'ressoa': 'conecta-se com, faz sentido',
+    'revolucionar': 'mudar, transformar',
+    'revolucionando': 'mudando, transformando',
+    'facilitar': 'permitir, ajudar, viabilizar',
+    'embasar': 'sustentar, servir de base',
+    'crucial': 'importante, essencial, necessário',
+    'multifacetado': 'com várias partes',
+    'multifacetada': 'com várias partes',
+    'ecossistema': 'sistema, comunidade, rede, mercado',
+    'miríade': 'muitos, vários',
+    'pletora': 'muitos, vários',
+    'englobar': 'incluir, cobrir',
+    'engloba': 'inclui, cobre',
+    'catalisar': 'iniciar, acelerar',
+    'reimaginar': 'repensar, redesenhar',
+    'elucidar': 'explicar, esclarecer',
+    'justapor': 'comparar, contrastar',
+    'transformador': 'que muda como [X] funciona',
+    'transformadora': 'que muda como [X] funciona',
+    'primordial': 'mais importante, prioridade máxima',
+  };
+
+  const PTBR_PATTERN_GROUPS = [
+    {
+      type: 'transition',
+      severity: 'medium',
+      patterns: [
+        /\bademais\b/gi,
+        /\boutrossim\b/gi,
+        /\bvale\s+(?:notar|ressaltar|destacar)\s+que\b/gi,
+        /\bem\s+conclusão\b/gi,
+        /\bem\s+suma\b/gi,
+        /\bpara\s+resumir\b/gi,
+        /\bquando\s+se\s+trata\s+de\b/gi,
+        /\bno\s+que\s+diz\s+respeito\s+a\b/gi,
+        /\bno\s+fim\s+das\s+contas\b/gi,
+        /\bao\s+final\s+do\s+dia\b/gi,
+        /\bdito\s+isso\b/gi,
+        /\bposto\s+isso\b/gi,
+      ],
+    },
+    {
+      type: 'chatbot',
+      severity: 'critical',
+      patterns: [
+        /\bespero\s+que\s+(?:isso\s+)?ajude!?\b/gi,
+        /\bcertamente!/gi,
+        /\bcom\s+certeza!/gi,
+        /\bótima\s+pergunta!/gi,
+        /\bexcelente\s+ponto!/gi,
+        /\bsinta-se\s+à\s+vontade\s+para\s+entrar\s+em\s+contato\b/gi,
+        /\bavise(?:-me)?\s+se\s+precisar\s+de\s+mais\s+alguma\s+coisa\b/gi,
+        /\bneste\s+artigo,?\s+vamos\s+explorar\b/gi,
+        /\bvamos\s+mergulhar\s+nisso!?\b/gi,
+      ],
+    },
+    {
+      type: 'sycophantic',
+      severity: 'critical',
+      patterns: [
+        /\bvocê\s+tem\s+toda\s+(?:a\s+)?razão\b/gi,
+        /\bessa\s+é\s+uma\s+ótima\s+pergunta\b/gi,
+        /\bexcelente\s+pergunta\b/gi,
+      ],
+    },
+    {
+      type: 'filler',
+      severity: 'medium',
+      patterns: [
+        /\bé\s+importante\s+(?:notar|ressaltar|destacar|lembrar)\s+que\b/gi,
+        /\bem\s+termos\s+de\b/gi,
+        /\bno\s+que\s+tange\s+a\b/gi,
+        /\ba\s+realidade\s+é\s+que\b/gi,
+      ],
+    },
+    {
+      type: 'generic-conclusion',
+      severity: 'medium',
+      patterns: [
+        /\bo\s+futuro\s+parece\s+(?:brilhante|promissor)\b/gi,
+        /\bsó\s+o\s+tempo\s+dirá\b/gi,
+        /\buma\s+coisa\s+é\s+certa\b/gi,
+        /\bà\s+medida\s+que\s+avançamos\b/gi,
+      ],
+    },
+    {
+      type: 'lets-construction',
+      severity: 'medium',
+      patterns: [
+        /\bvamos\s+explorar\b/gi,
+        /\bvamos\s+dar\s+uma\s+olhada\b/gi,
+        /\bvamos\s+destrinchar\b/gi,
+        /\bvamos\s+examinar\b/gi,
+        /\bvamos\s+analisar\s+isso\b/gi,
+      ],
+    },
+    {
+      type: 'reasoning-artifact',
+      severity: 'critical',
+      patterns: [
+        /\bdeixe-me\s+pensar\s+passo\s+a\s+passo\b/gi,
+        /\bdividindo\s+isso\s+em\s+partes\b/gi,
+        /\bpara\s+abordar\s+isso\s+sistematicamente\b/gi,
+        /\baqui\s+está\s+(?:o\s+)?meu\s+processo\s+de\s+pensamento\b/gi,
+        /\bprimeiro,?\s+vamos\s+considerar\b/gi,
+      ],
+    },
+    {
+      type: 'significance-inflation',
+      severity: 'high',
+      patterns: [
+        /\bmarcando\s+um\s+momento\s+(?:crucial|decisivo|importante|histórico)\b/gi,
+        /\bum\s+divisor\s+de\s+águas\s+para\b/gi,
+        /\b(?:momento|marco|capítulo|era|ponto\s+de\s+virada)\s+na\s+evolução\s+d[eoas]\b/gi,
+      ],
+    },
+    {
+      type: 'vague-attribution',
+      severity: 'critical',
+      patterns: [
+        /\bespecialistas\s+(?:acreditam|dizem|sugerem|concordam|apontam)\b/gi,
+        /\bestudos\s+(?:mostram|sugerem|indicam|apontam)\b/gi,
+        /\bpesquisas\s+(?:mostram|sugerem|indicam)\b/gi,
+        /\blíderes\s+d[eo]\s+(?:setor|mercado|indústria)\s+(?:concordam|acreditam|dizem)\b/gi,
+      ],
+    },
+    {
+      type: 'hollow-intensifier',
+      severity: 'medium',
+      patterns: [
+        /\bgenuinamente\b/gi,
+        /\bverdadeiramente\b/gi,
+        /\bpara\s+ser\s+honesto\b/gi,
+        /\bsejamos\s+claros\b/gi,
+      ],
+    },
+    {
+      type: 'cutoff-disclaimer',
+      severity: 'critical',
+      patterns: [
+        /\baté\s+(?:a\s+)?minha\s+última\s+atualização\b/gi,
+        /\baté\s+minha\s+data\s+de\s+corte\b/gi,
+        /\bnão\s+tenho\s+acesso\s+a\s+(?:dados|informações)\s+em\s+tempo\s+real\b/gi,
+        /\bcomo\s+um\s+modelo\s+de\s+linguagem(?:\s+de\s+ia)?\b/gi,
+        /\bsou\s+um\s+(?:assistente|modelo)\s+de\s+inteligência\s+artificial\b/gi,
+      ],
+    },
+    {
+      type: 'hedge-stack',
+      severity: 'high',
+      patterns: [
+        /\b(?:pode|poderia|poderá)\s+(?:potencialmente|eventualmente|possivelmente)\b/gi,
+        /\b(?:potencialmente|eventualmente)\s+(?:pode|poderia)\b/gi,
+      ],
+    },
+    {
+      type: 'formulaic-opener',
+      severity: 'high',
+      patterns: [
+        /\bno\s+(?:mundo|cenário|panorama)\s+em\s+(?:rápida|constante)\s+(?:evolução|transformação|mudança)\s+d[eoa]\b/gi,
+        /\bem\s+uma\s+era\s+(?:digital\s+)?onde\b/gi,
+      ],
+    },
+    {
+      type: 'speculative-opener',
+      severity: 'high',
+      patterns: [
+        /\b(?:imagine|visualize|idealize)\s+um\s+(?:mundo|futuro)\s+(?:onde|em\s+que)\b/gi,
+      ],
+    },
+    {
+      type: 'negative-parallelism',
+      severity: 'high',
+      patterns: [
+        /\bnão\s+(?:é|se\s+trata)\s+(?:apenas|só|somente|meramente)\s+(?:de\s+)?[^,;:.!?\n\u2014\u2013]{1,80}?(?:\s*[,;:]|\s*[\u2014\u2013]|\s+--)\s*(?:é|trata-se\s+de)\b/gi,
+      ],
+    },
+  ];
 
   // Moving-average type-token ratio (MATTR; Covington & McFall 2010,
   // doi:10.1080/09296171003643098): the share of distinct tokens in each
@@ -2480,14 +2733,15 @@ const AIDetector = (() => {
     // ── 1. Tier 1 words ──────────────────────────────────────────
     const tier1Found = new Set();
     for (const token of tokens) {
-      if (contextMode === 'technical' && TECHNICAL_EXEMPT.has(token)) continue;
-      if (Object.hasOwn(TIER1, token) && !tier1Found.has(token)) {
+      if (contextMode === 'technical' && (TECHNICAL_EXEMPT.has(token) || PTBR_TECHNICAL_EXEMPT.has(token))) continue;
+      const suggestion = Object.hasOwn(TIER1, token) ? TIER1[token] : (Object.hasOwn(PTBR_TIER1, token) ? PTBR_TIER1[token] : null);
+      if (suggestion !== null && !tier1Found.has(token)) {
         tier1Found.add(token);
         issues.push({
           type: 'tier1',
           text: token,
           severity: 'high',
-          suggestion: TIER1[token],
+          suggestion,
         });
       }
     }
@@ -2495,12 +2749,12 @@ const AIDetector = (() => {
     // Tier 1 multi-word phrases. Adds each distinct phrase (lowercased) to
     // `tier1Found` so the same phrase hit multiple times only produces one
     // issue — matches the downstream dedup behavior.
-    for (const phrase of TIER1_PHRASES) {
+    for (const phrase of [...TIER1_PHRASES, ...PTBR_TIER1_PHRASES]) {
       const regex = new RegExp(phrase.pattern.source, phrase.pattern.flags);
       let match;
       while ((match = regex.exec(text)) !== null) {
         const lower = match[0].toLowerCase();
-        if (contextMode === 'technical' && TECHNICAL_EXEMPT.has(lower)) continue;
+        if (contextMode === 'technical' && (TECHNICAL_EXEMPT.has(lower) || PTBR_TECHNICAL_EXEMPT.has(lower))) continue;
         if (phrase.skip && phrase.skip(text, match.index)) continue;
         if (tier1Found.has(lower)) continue;
         tier1Found.add(lower);
@@ -2522,10 +2776,11 @@ const AIDetector = (() => {
       const found = [];
       const suggestions = {};
       for (const token of paraTokens) {
-        if (contextMode === 'technical' && TECHNICAL_EXEMPT.has(token)) continue;
-        if (Object.hasOwn(TIER2, token) && !found.includes(token)) {
+        if (contextMode === 'technical' && (TECHNICAL_EXEMPT.has(token) || PTBR_TECHNICAL_EXEMPT.has(token))) continue;
+        const suggestion = Object.hasOwn(TIER2, token) ? TIER2[token] : (Object.hasOwn(PTBR_TIER2, token) ? PTBR_TIER2[token] : null);
+        if (suggestion !== null && !found.includes(token)) {
           found.push(token);
-          suggestions[token] = TIER2[token];
+          suggestions[token] = suggestion;
         }
       }
       for (const cond of TIER2_CONDITIONAL) {
@@ -2608,6 +2863,9 @@ const AIDetector = (() => {
     ));
     issues.push(...matchPatterns(text, DEV_BLOG_BOILERPLATE, 'dev-blog-boilerplate', 'medium'));
     issues.push(...findUnnecessaryHyphenation(text));
+    for (const group of PTBR_PATTERN_GROUPS) {
+      issues.push(...matchPatterns(text, group.patterns, group.type, group.severity));
+    }
 
     // ── Tier 1 v2: formulaic openers + parenthetical hedges ──────────
     issues.push(...matchPatterns(text, FORMULAIC_OPENERS, 'formulaic-opener', 'high'));

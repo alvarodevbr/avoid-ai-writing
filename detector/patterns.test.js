@@ -4590,6 +4590,40 @@ test('#212: template-phrase stays clean on concrete adjectives before step', () 
   }
 });
 
+test('PT-BR: detects idiomatic Brazilian Portuguese AI-isms across categories', () => {
+  const text = [
+    'Certamente! No cenário em constante evolução da tecnologia, vamos explorar como desbravar essa tapeçaria holística.',
+    'A plataforma serve como um divisor de águas e conta com recursos meticulosos a fim de fomentar e empoderar equipes.',
+    'Ademais, especialistas acreditam que isso pode potencialmente revolucionar o mercado. Não é apenas uma ferramenta, é um paradigma.',
+    'Em conclusão, o futuro parece brilhante! Espero que isso ajude!',
+  ].join(' ');
+  const r = AIDetector.analyzeText(text);
+  const types = new Set(r.issues.map((i) => i.type));
+  assert.ok(types.has('chatbot'), 'expected PT-BR chatbot artifact');
+  assert.ok(types.has('formulaic-opener'), 'expected PT-BR formulaic opener');
+  assert.ok(types.has('lets-construction'), 'expected PT-BR lets-construction');
+  assert.ok(types.has('tier1'), 'expected PT-BR tier1 vocabulary');
+  assert.ok(types.has('tier1-clarity'), 'expected PT-BR tier1-clarity');
+  assert.ok(types.has('tier2'), 'expected PT-BR tier2 cluster');
+  assert.ok(types.has('transition'), 'expected PT-BR transition');
+  assert.ok(types.has('vague-attribution'), 'expected PT-BR vague attribution');
+  assert.ok(types.has('hedge-stack'), 'expected PT-BR hedge stack');
+  assert.ok(types.has('negative-parallelism'), 'expected PT-BR negative parallelism');
+  assert.ok(types.has('generic-conclusion'), 'expected PT-BR generic conclusion');
+  assert.ok(r.score >= 50, `expected high AI score on PT-BR AI-heavy text, got ${r.score}`);
+});
+
+test('PT-BR: plain Brazilian Portuguese human prose stays clean', () => {
+  const text = [
+    'O deploy terminou ontem à noite depois da migração do banco.',
+    'A equipe revisou os logs hoje cedo, confirmou que a fila de pagamentos processou todos os pedidos pendentes e fechou o chamado.',
+    'Ainda precisamos ajustar o limite de memória do servidor antes de sexta-feira.',
+  ].join(' ');
+  const r = AIDetector.analyzeText(text);
+  assert.equal(r.issues.length, 0, `expected 0 issues on clean PT-BR prose, got ${JSON.stringify(r.issues)}`);
+  assert.equal(r.score, 0);
+});
+
 
 if (failed > 0) {
   console.error(`\n${failed} test(s) failed`);

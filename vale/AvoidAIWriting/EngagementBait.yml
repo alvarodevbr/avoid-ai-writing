@@ -1,7 +1,7 @@
 # Generated from detector/patterns.js (PATTERN_TABLES.types['social-cta-closer']). Do not edit; run scripts/build-vale.js.
 extends: existence
 message: 'Engagement-bait closer: ''%s''.'
-link: https://github.com/conorbronsdon/avoid-ai-writing/blob/main/references/patterns.md
+link: https://github.com/alvarodevbr/avoid-ai-writing/blob/main/references/patterns.md
 level: warning
 ignorecase: true
 nonword: true

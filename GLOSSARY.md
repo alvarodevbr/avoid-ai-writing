@@ -1,41 +1,41 @@
-# Glossary
+# Glossário (Glossary)
 
-One-line definitions of the terms used across this repo's docs and issue templates. Each entry links to the canonical definition; when the two disagree, the linked source wins.
+Definições de uma linha dos termos usados na documentação e nos templates de issue deste repositório. Cada entrada aponta para a definição canônica; quando houver divergência, a fonte vinculada prevalece.
 
-## Word tiers
+## Camadas de vocabulário (Word tiers)
 
-| Term | Meaning |
+| Termo | Significado |
 |---|---|
-| [Tier 1](references/patterns.md#tier-1--default-replacements) | Words to review on every match. Split into two bands, 1A and 1B, that use the same replacements but mean different things. |
-| [Tier 1A](references/patterns.md#tier-1a--ai-frequency-markers) | AI frequency markers: words claimed to appear far more often in machine text. A cluster is evidence about how a passage was produced. |
-| [Tier 1B](references/patterns.md#tier-1b--clarity-edits) | Clarity edits: wordiness and inflated formality. Not evidence of machine authorship. The detector emits them as `tier1-clarity`. |
-| [Tier 2](references/patterns.md#tier-2--flag-when-2-appear-in-the-same-paragraph) | Words that are fine alone. Flagged when two or more appear in the same paragraph. |
-| [Tier 3](references/patterns.md#tier-3--flag-only-at-high-density) | Common words flagged only at high density, roughly 3% or more of the text. |
-| [Tier 3 phrases](references/patterns.md#tier-3-phrases--flag-at-density-or-in-clusters) | Multi-word boilerplate. Flagged when one phrase appears two or more times, or when three or more distinct phrases appear in one piece. |
+| [Tier 1](references/patterns.md#tier-1--default-replacements) | Palavras para revisar em cada ocorrência. Dividido em duas faixas, 1A e 1B, que usam as mesmas substituições, mas significam coisas diferentes. |
+| [Tier 1A](references/patterns.md#tier-1a--ai-frequency-markers) | Marcadores de frequência de IA: palavras que aparecem muito mais em texto gerado por máquina. Um agrupamento delas é evidência sobre como uma passagem foi produzida. |
+| [Tier 1B](references/patterns.md#tier-1b--clarity-edits) | Edições de clareza: prolixidade e formalidade inflada. Não são evidência de autoria por máquina. O detector as emite como `tier1-clarity`. |
+| [Tier 2](references/patterns.md#tier-2--flag-when-2-appear-in-the-same-paragraph) | Palavras que são boas sozinhas. Sinalizadas quando duas ou mais aparecem no mesmo parágrafo. |
+| [Tier 3](references/patterns.md#tier-3--flag-only-at-high-density) | Palavras comuns sinalizadas apenas em alta densidade, aproximadamente 3% ou mais do texto (mínimo de 3 usos). |
+| [Frases do Tier 3](references/patterns.md#tier-3-phrases--flag-at-density-or-in-clusters) | Clichês compostos de várias palavras (*boilerplate*). Sinalizados quando uma frase aparece duas ou mais vezes, ou quando três ou mais frases distintas aparecem no mesmo texto. |
 
-## Severity
+## Gravidade (Severity)
 
-| Term | Meaning |
+| Termo | Significado |
 |---|---|
-| [P0](SKILL.md#p0--credibility-killers-fix-immediately) | Credibility killers. Fix immediately. |
-| [P1](SKILL.md#p1--obvious-ai-smell-fix-before-publishing) | Obvious AI smell. Fix before publishing. |
-| [P2](SKILL.md#p2--stylistic-polish-fix-when-time-allows) | Stylistic polish. Fix when time allows. A quick pass covers P0 and P1; a full audit covers all three. |
+| [P0](SKILL.md#p0--credibility-killers-fix-immediately) | Destruidores de credibilidade. Corrija imediatamente. |
+| [P1](SKILL.md#p1--obvious-ai-smell-fix-before-publishing) | Cheiro óbvio de IA. Corrija antes de publicar. |
+| [P2](SKILL.md#p2--stylistic-polish-fix-when-time-allows) | Polimento estilístico. Corrija quando o tempo permitir. Uma passagem rápida cobre P0 e P1; uma auditoria completa cobre os três. |
 
-## Modes and profiles
+## Modos e perfis (Modes and profiles)
 
-| Term | Meaning |
+| Termo | Significado |
 |---|---|
-| [`rewrite` mode](SKILL.md#modes) | The default. Flags AI-isms and rewrites the text to fix them. |
-| [`detect` mode](SKILL.md#modes) | Flags AI-isms only, with no rewriting. |
-| [`edit` mode](SKILL.md#modes) | Edits a prose file in place with minimal, targeted changes. |
-| [Context profile](references/patterns.md#context-profiles) | The audience hint (`linkedin`, `blog`, `technical-blog`, `investor-email`, `docs`, `casual`) that sets how strict each rule is. |
-| [Voice profile](references/patterns.md#voice-profiles) | The optional persona (`casual`, `professional`, `technical`, `warm`, `blunt`) that sets how the prose should sound. Independent of the context profile. |
-| [Register](.github/ISSUE_TEMPLATE/false_positive.yml) | The kind of writing: blog, docs, email, social post, and so on. Both issue templates ask for it because a rule that holds in one register can misfire in another. |
-| [Self-reference escape hatch](SKILL.md#self-reference-escape-hatch) | Quoted examples, code blocks, and text marked as illustrative are exempt from flagging, so writing *about* AI patterns is not scored for them. |
+| [Modo `rewrite`](SKILL.md#modes) | O padrão. Sinaliza IA-ismos e reescreve o texto para corrigi-los. |
+| [Modo `detect`](SKILL.md#modes) | Sinaliza apenas os IA-ismos, sem reescrever. |
+| [Modo `edit`](SKILL.md#modes) | Edita um arquivo de prosa diretamente no local com alterações mínimas e direcionadas. |
+| [Perfil de contexto](references/patterns.md#context-profiles) | A dica de público (`linkedin`, `blog`, `technical-blog`, `investor-email`, `docs`, `casual`) que define o rigor de cada regra. |
+| [Perfil de voz](references/patterns.md#voice-profiles) | A persona opcional (`casual`, `professional`, `technical`, `warm`, `blunt`) que define como a prosa deve soar. Independente do perfil de contexto. |
+| [Registro (Register)](.github/ISSUE_TEMPLATE/false_positive.yml) | O tipo de escrita: blog, documentação, e-mail, post social e assim por diante. |
+| [Válvula de escape de autorreferência](SKILL.md#self-reference-escape-hatch) | Exemplos entre aspas, blocos de código e textos marcados como ilustrativos ficam isentos de sinalização, para que escrever *sobre* padrões de IA não seja penalizado por citá-los. |
 
-## Detector options
+## Opções do detector (Detector options)
 
-| Term | Meaning |
+| Termo | Significado |
 |---|---|
-| [`contextMode`](detector/README.md#analyzetexttext-options--result) | The detector's context: `general` (default), `technical`, `marketing`, or `personal`. Each context profile maps to one; see [the mapping](references/patterns.md#detector-mode-mapping). |
-| [`sourceMode`](detector/README.md#analyzetexttext-options--result) | How the detector reads input: `plain` (default) or `rendered-markdown`, which masks YAML frontmatter and HTML comments before scoring. |
+| [`contextMode`](detector/README.md#analyzetexttext-options--result) | O contexto do detector: `general` (padrão), `technical`, `marketing` ou `personal`. Cada perfil de contexto mapeia para um deles; veja [o mapeamento](references/patterns.md#detector-mode-mapping). |
+| [`sourceMode`](detector/README.md#analyzetexttext-options--result) | Como o detector lê a entrada: `plain` (padrão) ou `rendered-markdown`, que mascara YAML frontmatter e comentários HTML antes de pontuar. |

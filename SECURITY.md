@@ -1,18 +1,11 @@
-# Security policy
+# Política de segurança (Security policy)
 
-## Supported versions
+## Versões suportadas
 
-Security fixes target the current `main` branch and the latest
-[release](https://github.com/conorbronsdon/avoid-ai-writing/releases). Older
-releases are not routinely patched.
+As correções de segurança visam a branch `main` atual e o [release](https://github.com/alvarodevbr/avoid-ai-writing/releases) mais recente. Versões mais antigas não recebem patches rotineiramente.
 
-## Report a vulnerability
+## Relatar uma vulnerabilidade
 
-Do not file a public issue for an undisclosed security problem. Use this
-repository's
-[private vulnerability reporting](https://github.com/conorbronsdon/avoid-ai-writing/security/advisories/new)
-form instead.
+Não abra uma issue pública para um problema de segurança não divulgado. Use o formulário de [relato privado de vulnerabilidades](https://github.com/alvarodevbr/avoid-ai-writing/security/advisories/new) deste repositório.
 
-Include the affected version or commit, reproduction steps, realistic impact,
-and any suggested mitigation. Reports about code execution, path traversal,
-credential exposure, or release and package integrity are especially useful.
+Inclua a versão ou commit afetado, passos de reprodução, impacto realista e qualquer mitigação sugerida. Relatos sobre execução de código, travessia de caminho (*path traversal*), exposição de credenciais ou integridade de releases e pacotes são especialmente úteis.

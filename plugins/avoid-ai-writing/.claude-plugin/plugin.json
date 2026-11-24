@@ -3,10 +3,10 @@
   "description": "Audit & rewrite content to remove AI writing patterns (\"AI-isms\"). Supports detect-only and edit-in-place modes, voice profiles, and iterate-to-convergence.",
   "version": "3.39.1",
   "author": {
-    "name": "Conor Bronsdon"
+    "name": "Alvaro Araujo"
   },
-  "homepage": "https://github.com/conorbronsdon/avoid-ai-writing",
-  "repository": "https://github.com/conorbronsdon/avoid-ai-writing",
+  "homepage": "https://github.com/alvarodevbr/avoid-ai-writing",
+  "repository": "https://github.com/alvarodevbr/avoid-ai-writing",
   "license": "MIT",
   "keywords": ["writing", "editing", "ai-detection", "humanize"]
 }

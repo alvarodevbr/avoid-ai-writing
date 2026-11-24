@@ -1,13 +1,13 @@
-# Terms
+# Termos de Uso (Terms)
 
-This plugin package and the underlying Avoid AI Writing project are provided under the MIT License in this repository.
+Este pacote de plugin e o projeto subjacente Avoid AI Writing são fornecidos sob a Licença MIT neste repositório.
 
-The plugin identifies writing patterns and can help revise prose. Its scores and flags are not proof of AI authorship and must not be treated as the sole basis for academic, employment, publication, disciplinary, legal, or other consequential decisions.
+O plugin identifica padrões de escrita e pode ajudar a revisar prosa. Suas pontuações e sinalizações não são prova de autoria por IA e não devem ser tratadas como a única base para decisões acadêmicas, de emprego, publicação, disciplinares, legais ou outras decisões de grande impacto.
 
-The plugin edits prose. It does not judge who wrote a text or whether a person is eligible for anything. Do not use its output about a person for any purpose that could have a legal or material impact on that person, such as academic, employment, disciplinary, or credit decisions. Do not use it for academic dishonesty, and do not present AI-generated output as human-written.
+O plugin edita prosa. Ele não julga quem escreveu um texto nem se uma pessoa é elegível para qualquer coisa. Não use sua saída sobre uma pessoa para qualquer finalidade que possa ter impacto legal ou material sobre ela. Não o utilize para desonestidade acadêmica e não apresente saídas geradas por IA como escritas por humanos.
 
-The plugin is not designed for or marketed to children under 13.
+O plugin não foi projetado nem comercializado para menores de 13 anos.
 
-Users remain responsible for reviewing rewritten content, verifying factual accuracy, respecting third-party rights, and deciding whether an edit is appropriate for the destination.
+Os usuários permanecem responsáveis por revisar o conteúdo reescrito, verificar a exatidão factual, respeitar direitos de terceiros e decidir se uma edição é apropriada para o destino.
 
-The software is provided without warranty, subject to the MIT License.
+O software é fornecido sem garantia, sujeito à Licença MIT.

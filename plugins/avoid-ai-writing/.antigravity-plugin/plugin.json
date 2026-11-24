@@ -5,11 +5,11 @@
   "version": "3.39.1",
   "description": "Audit & rewrite content to remove AI writing patterns (\"AI-isms\"). Supports detect-only and edit-in-place modes, voice profiles, and iterate-to-convergence.",
   "author": {
-    "name": "Conor Bronsdon",
-    "url": "https://github.com/conorbronsdon/avoid-ai-writing"
+    "name": "Alvaro Araujo",
+    "url": "https://github.com/alvarodevbr/avoid-ai-writing"
   },
-  "homepage": "https://github.com/conorbronsdon/avoid-ai-writing",
-  "repository": "https://github.com/conorbronsdon/avoid-ai-writing",
+  "homepage": "https://github.com/alvarodevbr/avoid-ai-writing",
+  "repository": "https://github.com/alvarodevbr/avoid-ai-writing",
   "suggestedPrompts": [
     "Scan this text for AI writing patterns and flag only, without rewriting it.",
     "Rewrite this draft to remove AI-isms while preserving my voice, facts, and structure.",

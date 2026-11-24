@@ -1,19 +1,16 @@
-# Support
+# Suporte (Support)
 
-For bugs, routing problems, false positives, packaging issues, or ChatGPT and Codex plugin problems, open an issue at:
+Para bugs, problemas de roteamento, falsos positivos, problemas de empacotamento ou questões com o plugin para ChatGPT e Codex, abra uma issue em:
 
-https://github.com/conorbronsdon/avoid-ai-writing/issues
+https://github.com/alvarodevbr/avoid-ai-writing/issues
 
-Include the plugin version, the host surface you used, the expected behavior, and a minimal reproduction. Do not post confidential drafts or personal information in a public issue.
+Inclua a versão do plugin, o ambiente host utilizado, o comportamento esperado e uma reprodução mínima. Não publique rascunhos confidenciais ou informações pessoais em uma issue pública.
 
-For security vulnerabilities, do not use the public issue tracker. Follow
-[SECURITY.md](SECURITY.md) and use GitHub private vulnerability reporting.
+Para vulnerabilidades de segurança, não use o rastreador público de issues. Siga o arquivo [SECURITY.md](SECURITY.md) e use o relato privado de vulnerabilidades do GitHub.
 
-## Static skill scanners
+## Scanners estáticos de skills
 
-NVIDIA SkillSpector v2.12.0 (`--no-llm`) reported the following findings when scanning v3.38.0 of this skill. These specific matches were reviewed as false positives:
+O NVIDIA SkillSpector v2.12.0 (`--no-llm`) relatou os seguintes achados ao escanear a v3.38.0 desta skill, revisados como falsos positivos:
 
-- The `<!-- reference-loading:start -->` and `<!-- patterns:... -->` comments are build markers. The instruction between them is visible text. Some scanners match a keyword substring (for example "get" in "targeted") across two comments and report "hidden instructions" (NVIDIA/SkillSpector#297).
-- `references/patterns.md` talks about deleting and dropping quoted phrases, because that is what the skill does. Some scanners read removal verbs near quotes as possible obfuscation and mark the file as partially analyzed (NVIDIA/SkillSpector#868). In this reported case, the trigger was removal vocabulary, not file size.
-
-If you vendor the skill, review new findings independently and baseline or suppress only the specific matches you have verified. An incomplete-analysis warning still indicates reduced scan coverage, even when its trigger is benign. Suppressing that warning does not restore the missing coverage.
+- Os comentários `<!-- reference-loading:start -->` e `<!-- patterns:... -->` são marcadores de build. A instrução entre eles é texto visível.
+- `references/patterns.md` fala sobre apagar e remover frases entre aspas, porque é isso que a skill faz. Alguns scanners leem verbos de remoção próximos a aspas como possível ofuscação.

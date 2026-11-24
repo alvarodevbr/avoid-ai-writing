@@ -1,9 +1,9 @@
-# Attribution and package notice
+# Aviso de atribuição e pacote (Attribution and package notice)
 
-The canonical Avoid AI Writing skill, detector, validator, documentation, and underlying project are Copyright (c) 2026 Conor Bronsdon and distributed under the MIT License in this repository.
+A skill canônica Avoid AI Writing, o detector, o validador, a documentação e o projeto subjacente são Copyright (c) 2026 Alvaro Araujo e distribuídos sob a Licença MIT neste repositório.
 
-The ChatGPT and Codex package added in this repository preserves the original canonical skill as a generated copy that is identical except for the omitted frontmatter `metadata` block, which the OpenAI portal rejects. Its router and focused workflow skills are packaging and orchestration additions. They do not replace the original rulebook or claim authorship of it.
+O pacote para ChatGPT e Codex adicionado neste repositório preserva a skill canônica original como uma cópia gerada idêntica, exceto pelo bloco `metadata` omitido do frontmatter, que o portal da OpenAI rejeita. Seu roteador e skills focadas de fluxo de trabalho são adições de empacotamento e orquestração. Eles não substituem o livro de regras original nem reivindicam sua autoria.
 
-The public OpenAI package intentionally excludes the separate `avoid-ai-writing-mcp` project. That project is optional and independently distributed.
+O pacote público da OpenAI exclui intencionalmente o projeto separado `avoid-ai-writing-mcp`, que é opcional e distribuído de forma independente.
 
-The ChatGPT and Codex packaging, router, and workflow Skills were contributed by Mamdouh Aboammar (GitHub: imMamdouhaboammar) under the same MIT License. Publication of the packaged listing is by the canonical project owner.
+O empacotamento para ChatGPT e Codex, o roteador e as Skills de fluxo de trabalho foram contribuídos por Mamdouh Aboammar (GitHub: imMamdouhaboammar) sob a mesma Licença MIT. A publicação da listagem empacotada é feita pelo proprietário canônico do projeto.

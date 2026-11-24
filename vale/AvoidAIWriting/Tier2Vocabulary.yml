@@ -4,7 +4,7 @@
 # at the lowest level. Raise or disable it in .vale.ini to taste.
 extends: existence
 message: 'Word cluster vocabulary: ''%s''. The detector flags this only alongside another Tier 2 word in the same paragraph.'
-link: https://github.com/conorbronsdon/avoid-ai-writing/blob/main/references/patterns.md
+link: https://github.com/alvarodevbr/avoid-ai-writing/blob/main/references/patterns.md
 level: suggestion
 ignorecase: true
 nonword: true

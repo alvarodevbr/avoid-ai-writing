@@ -1,5 +1,5 @@
 {
-  "feed": "https://github.com/conorbronsdon/avoid-ai-writing/releases.atom",
+  "feed": "https://github.com/alvarodevbr/avoid-ai-writing/releases.atom",
   "vale_version": ">=3.24.0",
   "license_files": [
     "LICENSE"

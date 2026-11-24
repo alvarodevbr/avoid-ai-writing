@@ -6,6 +6,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- Traduzido e adaptado o repositório (`SKILL.md`, `references/patterns.md`, documentação, skills especializadas e motor determinístico `detector/patterns.js`) para o Português Brasileiro (PT-BR) e seus padrões idiomáticos, mantendo compatibilidade bilíngue com o inglês e com os contratos de ferramentas.
+
 ## [3.39.1] — 2026-11-24
 
 ### Fixed
@@ -14,7 +18,7 @@ All notable changes to this project are documented here.
 - The slash-command example in README.md quotes the opening of the SKILL.md description, and nothing checked that quote. It is now registered as an SSOT fact (`skill-description-opening`), so editing the canonical description fails CI until the README example is updated to match (#453).
 - The em dash rate no longer counts the separator dash in an HTML list item that opens with a `<strong>`, `<b>`, or `<a>` lead term of at most five words (`<li><strong>Term</strong> — gloss</li>`). This matches the existing Markdown `- **Term** — gloss` exemption. Items that share a line, as in minified HTML, get the same check. Dashes after plain text, later in the item, or outside `<li>` still count (#351).
 - Sentence-length `uniformity` no longer measures glossary entries: three or more bold-lead definitions with distinct terms (`**Term:** gloss`, `- **Term** — gloss`), wrapped lines included. A short glossary no longer reads as flat prose rhythm. A label repeated on every line, such as `**Note:**`, stays in the sample, as does prose around the glossary. The sample gate and threshold are unchanged (#351).
-- Remove a quadratic scan from the em dash separator carve-out. Its line-anchored `^\s*` also matched U+2028 and U+2029, which are line terminators in a multiline regex, so a long run of either character was rescanned from every line start: `analyzeText()` took about 40 seconds on a 99 KB input (conorbronsdon/avoid-ai-writing-mcp#15). The leading indent now stops at line terminators. Matching is unchanged; U+2028, U+2029, and mixed runs are now in the bounded-time test.
+- Remove a quadratic scan from the em dash separator carve-out. Its line-anchored `^\s*` also matched U+2028 and U+2029, which are line terminators in a multiline regex, so a long run of either character was rescanned from every line start: `analyzeText()` took about 40 seconds on a 99 KB input (alvarodevbr/avoid-ai-writing-mcp#15). The leading indent now stops at line terminators. Matching is unchanged; U+2028, U+2029, and mixed runs are now in the bounded-time test.
 - The `dev-blog-boilerplate` out-of-the-box slogan and the `unnecessary-hyphenation` fix for "works out-of-the-box" now also match the phrase written with a Unicode hyphen (U+2010), non-breaking hyphen (U+2011), or en dash (U+2013) between the words; the suggestion still reads "works out of the box". An em dash, U+2015, or the U+2012 figure dash after "works out" is still read as a break, so the "works out" idiom stays clean (#140).
 - The preservation validator drops a leading UTF-8 byte-order mark before comparing, as it already normalizes CRLF. A file read with `readFileSync(path, 'utf8')` keeps the mark, so the `^---` anchor missed the frontmatter and a fence on the first line, and a rewrite of either passed. A rewrite that only adds or drops the mark is no longer reported as a frontmatter change.
 
@@ -22,7 +26,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
-- A "Pre-publish pipeline" README section and a `fact-check` marketplace entry, so the companion skill installs from the `conorbronsdon-skills` marketplace alongside this one.
+- A "Pre-publish pipeline" README section and a `fact-check` marketplace entry, so the companion skill installs from the `alvarodevbr-skills` marketplace alongside this one.
 - Antigravity plugin manifest at `plugins/avoid-ai-writing/.antigravity-plugin/plugin.json`, enabling native discovery and installation in Google Antigravity alongside the Claude plugin manifest. Updated release checks and CI validation to maintain manifest parity.
 - A Vale style, `vale/AvoidAIWriting/`, generated from the detector's pattern tables by `scripts/build-vale.js`. `npm test` fails when the committed style is out of date. `vale/AvoidAIWriting/manifest.json` labels every detector type `verified`, `approximation`, `unsupported`, or `unassessed`; the style README's counts come from it. `scripts/vale-cases.test.js` runs a case that fires and a case that must not for every rule through Vale 3.26.0 and the detector, and records where they differ; CI installs that Vale version. `scripts/package-vale.py` builds a deterministic `AvoidAIWriting.zip` for a release (#94).
 - The detector exports `PATTERN_TABLES`: the pattern tables as recursively frozen plain data keyed by issue type, with regexes as `{ source, flags }` strings and a `schemaVersion`. Gated types carry a `gate` note. `analyzeText()` and the existing exports are unchanged. It replaces the draft sample export in `scripts/vale-export-sample.js`, which is removed (#94).
@@ -221,7 +225,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
-- **Judgment-only clarity rules from [odinfree's contribution (#129)](https://github.com/conorbronsdon/avoid-ai-writing/pull/129).** Flag obscured accountable decision-makers and repeated unexplained relabeling while preserving conventional personification, collective actors, and changes explained elsewhere in a passage. Add an audience-fit note for ambiguous proof terminology in cryptography, outside the vocabulary tiers. Narrow consequence-free restatements and repeated empty concession pairs; preserve concrete consequences and meaningful limitations. Rewrites use source facts or ask for missing details. The deterministic detector is unchanged.
+- **Judgment-only clarity rules from [odinfree's contribution (#129)](https://github.com/alvarodevbr/avoid-ai-writing/pull/129).** Flag obscured accountable decision-makers and repeated unexplained relabeling while preserving conventional personification, collective actors, and changes explained elsewhere in a passage. Add an audience-fit note for ambiguous proof terminology in cryptography, outside the vocabulary tiers. Narrow consequence-free restatements and repeated empty concession pairs; preserve concrete consequences and meaningful limitations. Rewrites use source facts or ask for missing details. The deterministic detector is unchanged.
 
 ---
 
@@ -229,7 +233,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
-- **Repeated setup/reversal punchlines as a judgment-only subtype of manufactured punchlines.** Complete [cland4449's contribution (#130)](https://github.com/conorbronsdon/avoid-ai-writing/pull/130) with a P2 test for repeated reversals that replace concrete claims. Supported contrasts, isolated intentional lines, comedy, fiction, speeches, and quotations pass. Rewrites preserve source facts and ask for missing details instead of inventing failure modes. The deterministic detector is unchanged.
+- **Repeated setup/reversal punchlines as a judgment-only subtype of manufactured punchlines.** Complete [cland4449's contribution (#130)](https://github.com/alvarodevbr/avoid-ai-writing/pull/130) with a P2 test for repeated reversals that replace concrete claims. Supported contrasts, isolated intentional lines, comedy, fiction, speeches, and quotations pass. Rewrites preserve source facts and ask for missing details instead of inventing failure modes. The deterministic detector is unchanged.
 
 ---
 
@@ -242,7 +246,7 @@ All notable changes to this project are documented here.
   `.codex-plugin/plugin.json` manifest and scripts for packaging and
   validation. The canonical `SKILL.md` remains the editorial authority.
 - **Three detector-backed patterns from the `welttowelt` merged-system diff
-  ([#108](https://github.com/conorbronsdon/avoid-ai-writing/issues/108)).**
+  ([#108](https://github.com/alvarodevbr/avoid-ai-writing/issues/108)).**
   Launch-copy dramatic introductions — `Meet X,` followed by one of four
   launch-copy heads (`your new favorite`, `your new go-to`, or
   `the new home/way/standard` with its own tail), plus `Think X meets Y`;
@@ -318,7 +322,7 @@ All notable changes to this project are documented here.
 ### Changed
 
 - **README documents `npx skills add` as the fastest cross-agent install path.** The community [`skills`](https://github.com/vercel-labs/skills) CLI auto-detects installed coding agents and covers 75+ of them. Commands pin the installer at `skills@1.5.23`, note its Node `>=22.20.0` requirement, and clarify that the skill payload still follows this repository's current default branch. For this public root-level skill, the GitHub blob fast path normally installs only `SKILL.md`; if that path is unavailable, the CLI can fall back to cloning the full root skill directory. `skills update` refreshes whichever scope you select rather than every install at once. Existing manual per-platform steps (git clone, `clawhub install`, curl) stay as a no-Node fallback; nothing about them changed. No rule, detector, or word-table changes: the catalog stays 62 / 112.
-- **`SKILL.md`'s frontmatter carries a `repository` field.** A copy installed via the `skills` CLI's SKILL.md-only fast path previously had no link back to the project or its contributor community; `metadata.repository` now points to `github.com/conorbronsdon/avoid-ai-writing` alongside the existing `author` field. The generated plugin copy stays in sync via the existing `sync-plugin-skill.sh`.
+- **`SKILL.md`'s frontmatter carries a `repository` field.** A copy installed via the `skills` CLI's SKILL.md-only fast path previously had no link back to the project or its contributor community; `metadata.repository` now points to `github.com/alvarodevbr/avoid-ai-writing` alongside the existing `author` field. The generated plugin copy stays in sync via the existing `sync-plugin-skill.sh`.
 
 ---
 

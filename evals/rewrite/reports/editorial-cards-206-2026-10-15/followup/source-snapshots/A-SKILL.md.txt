@@ -5,8 +5,8 @@ version: 3.38.0
 license: MIT
 compatibility: Any AI coding assistant that supports agentskills.io SKILL.md format (Claude Code, Cursor, VS Code Copilot, Hermes Agent, OpenHands, etc.) or OpenClaw. No external tools or APIs required.
 metadata:
-  author: Conor Bronsdon
-  repository: https://github.com/conorbronsdon/avoid-ai-writing
+  author: Alvaro Araujo
+  repository: https://github.com/alvarodevbr/avoid-ai-writing
   tags: writing editing voice quality
   agentskills_spec: "1.0"
   openclaw:
@@ -120,7 +120,7 @@ This skill operates in one of three modes:
 
 Trigger detect mode when the user says "detect," "flag only," "audit only," "just flag," "scan," "what AI patterns are in this," or similar. Trigger edit mode when the user names a file and asks you to fix or clean it in place. Default to rewrite mode if not specified.
 
-**Invocation.** Natural language is enough ("rewrite this in a blunt voice for LinkedIn," "edit `post.md` in place," "scan this, don't rewrite"). Power users can also pass explicit options, which map to the sections below: `[--mode rewrite|detect|edit]`, `[--voice casual|professional|technical|warm|blunt]`, [`--context linkedin|blog|technical-blog|investor-email|docs|casual`](https://github.com/conorbronsdon/avoid-ai-writing/blob/main/references/patterns.md#detector-mode-mapping), `[--file PATH]`, `[--iterate 1|2]`, `[--style CONFIG|GUIDE]`.
+**Invocation.** Natural language is enough ("rewrite this in a blunt voice for LinkedIn," "edit `post.md` in place," "scan this, don't rewrite"). Power users can also pass explicit options, which map to the sections below: `[--mode rewrite|detect|edit]`, `[--voice casual|professional|technical|warm|blunt]`, [`--context linkedin|blog|technical-blog|investor-email|docs|casual`](https://github.com/alvarodevbr/avoid-ai-writing/blob/main/references/patterns.md#detector-mode-mapping), `[--file PATH]`, `[--iterate 1|2]`, `[--style CONFIG|GUIDE]`.
 
 **Iterate to convergence (optional).** A normal rewrite may use up to two editing passes: the initial rewrite and, only when review finds another justified in-scope edit, one corrective pass. `--iterate 1` limits the workflow to the initial editing pass; `--iterate 2`, "iterate," and "keep going until it's clean" use the same two-pass ceiling as the default and stop early when no justified edit remains. `--iterate` never adds passes on top of that ceiling.
 

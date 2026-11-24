@@ -23,7 +23,7 @@ const AIDetector = require('../detector/patterns.js');
 const ROOT = path.join(__dirname, '..');
 const STYLE = 'AvoidAIWriting';
 const OUT = path.join(ROOT, 'vale', STYLE);
-const CATALOG = 'https://github.com/conorbronsdon/avoid-ai-writing/blob/main/references/patterns.md';
+const CATALOG = 'https://github.com/alvarodevbr/avoid-ai-writing/blob/main/references/patterns.md';
 const TABLES = AIDetector.PATTERN_TABLES;
 const T = TABLES.types;
 const LABELS = AIDetector.TYPE_LABELS;
@@ -303,7 +303,7 @@ function build() {
 
   // meta + license
   files['meta.json'] = JSON.stringify({
-    feed: 'https://github.com/conorbronsdon/avoid-ai-writing/releases.atom',
+    feed: 'https://github.com/alvarodevbr/avoid-ai-writing/releases.atom',
     vale_version: '>=3.24.0',
     license_files: ['LICENSE'],
   }, null, 2) + '\n';
@@ -340,7 +340,7 @@ function build() {
     `# ${STYLE} for Vale`,
     ``,
     `A [Vale](https://vale.sh) style generated from the regex-detectable rules in`,
-    `[avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing). It is built by`,
+    `[avoid-ai-writing](https://github.com/alvarodevbr/avoid-ai-writing). It is built by`,
     `\`scripts/build-vale.js\` from \`detector/patterns.js\`, so the tokens here are the detector's`,
     `tokens. Do not edit these files by hand.`,
     ``,
@@ -367,7 +367,7 @@ function build() {
     `## Use`,
     ``,
     `Place the ${STYLE} directory at \`styles/${STYLE}/\` in your project.`,
-    `Get it from the [repository](https://github.com/conorbronsdon/avoid-ai-writing/tree/main/vale/${STYLE}).`,
+    `Get it from the [repository](https://github.com/alvarodevbr/avoid-ai-writing/tree/main/vale/${STYLE}).`,
     `This style requires Vale 3.24.0 or newer. Then configure Vale:` ,
     ``,
     '```ini',

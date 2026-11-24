@@ -1,80 +1,47 @@
-# Agency role lenses for the Skill network
+# Lentes de papéis de agência para a rede de Skills
 
-These lenses are derived from the user's existing agency Skills and are used to review this Plugin's orchestration design. They are not public dependencies of Avoid AI Writing and should not widen discovery. When the matching agency Skill is available in the current host, it may be consulted explicitly. Otherwise apply the encoded lens below without claiming the external Skill ran.
+Estas lentes são usadas para revisar o design de orquestração deste Plugin. Elas não são dependências públicas do Avoid AI Writing.
 
 ## `agency-software-architect`
 
-Source role: software architecture, system boundaries, trade-offs, dependency direction, and reversible decisions.
+Papel de origem: arquitetura de software, fronteiras de sistema, compensações (*trade-offs*), direção de dependência e decisões reversíveis.
 
-Apply it to the Skill graph by checking:
+Aplique ao grafo de Skills verificando:
 
-- one canonical editorial authority instead of duplicated rulebooks,
-- explicit ownership for routing, detection, rewriting, mutation, verification, and interpretation,
-- typed edges with clear preconditions,
-- bounded repair loops and stop conditions,
-- no hidden dependency from core editorial behavior to an optional runtime,
-- changes remain reversible and package-local.
-
-This lens owns graph integrity and architecture decisions, not writing edits.
+- uma única autoridade editorial canônica em vez de livros de regras duplicados,
+- propriedade explícita para roteamento, detecção, reescrita, mutação, verificação e interpretação,
+- arestas tipadas com pré-condições claras,
+- loops de reparo limitados e condições de parada,
+- ausência de dependência oculta entre o comportamento editorial central e um ambiente de execução opcional,
+- alterações permanecem reversíveis e locais ao pacote.
 
 ## `agency-senior-developer`
 
-Source role: implementation quality, focused changes, testing, performance, and production reliability.
+Papel de origem: qualidade de implementação, mudanças focadas, testes, desempenho e confiabilidade em produção.
 
-Apply it to orchestration by checking:
+Aplique à orquestração verificando:
 
-- every claimed deterministic step maps to an executable bundled script or an actual host capability,
-- failures propagate instead of being swallowed,
-- named-file mutation uses the narrowest available patch/edit operation,
-- before/after snapshots exist when verification needs them,
-- CI validates graph integrity in addition to package shape,
-- generated and canonical copies cannot silently drift.
-
-This lens owns implementation fidelity, not editorial policy.
+- cada etapa determinística alegada mapeia para um script empacotado executável ou uma capacidade real do host,
+- falhas se propagam em vez de serem engolidas silenciosamente,
+- mutação de arquivo nomeado usa a operação de patch/edição mais restrita disponível,
+- instantâneos antes/depois existem quando a verificação precisa deles,
+- a CI valida a integridade do grafo além do formato do pacote,
+- cópias geradas e canônicas não podem divergir silenciosamente.
 
 ## `agency-ai-engineer`
 
-Source role: AI/ML system design, evaluation, monitoring, bias awareness, and responsible interpretation.
+Papel de origem: design de sistemas de IA/ML, avaliação, monitoramento, consciência de viés e interpretação responsável.
 
-Apply it to detector and interpretation flows by checking:
+Aplique aos fluxos de detecção e interpretação verificando:
 
-- deterministic detector output is separated from model-only observations,
-- context mode is carried through handoffs,
-- score and label are treated as signals, not ground truth,
-- false positives and distribution shift are considered,
-- consequential authorship conclusions are routed to the interpretation guardrail,
-- discovery/routing evals include positive, indirect, ambiguous, and negative cases.
-
-This lens owns evidence semantics and evaluation discipline, not authorship verdicts.
+- a saída determinística do detector é separada de observações apenas do modelo (*model-only*),
+- o modo de contexto é levado adiante nos handoffs,
+- pontuação e rótulo são tratados como sinais, não como verdade absoluta,
+- falsos positivos e mudança de distribuição são considerados,
+- conclusões de autoria de grande impacto são roteadas para o guardrail de interpretação.
 
 ## `agency-inclusive-visuals-specialist`
 
-Source role: culturally accurate, non-stereotypical representation in generated image/video prompts and creative briefs.
+Papel de origem: representação culturalmente precisa e não estereotipada em prompts de geração de imagem/vídeo e briefings criativos.
 
-Apply it only when the text being cleaned is itself a visual prompt, storyboard, shot description, or creative brief that represents people.
-
-Treat the following as protected semantic constraints when present:
-
-- identity and self-description,
-- cultural and geographic specificity,
-- age and body diversity,
-- disability and mobility-aid details,
-- clothing and religious/cultural attire,
-- skin-tone and lighting requirements,
-- physical-reality constraints,
-- explicit anti-stereotype and anti-tokenism constraints.
-
-A rewrite may remove AI-writing patterns around those details, but must not flatten them into generic descriptors, erase them, or replace them with stock-photo language.
-
-This lens is a conditional semantic guard, not a reason to route ordinary prose into a visual-design workflow.
-
-## Review order
-
-For orchestration changes, review in this order:
-
-1. `agency-software-architect`: Is the graph coherent and bounded?
-2. `agency-ai-engineer`: Are evidence and uncertainty represented correctly?
-3. `agency-senior-developer`: Can the handoffs be executed and verified reliably?
-4. `agency-inclusive-visuals-specialist`: If human representation is present, are identity-sensitive constraints preserved?
-
-A failure in an earlier gate should be fixed before polishing later behavior.
+Aplique apenas quando o texto sendo limpo for ele mesmo um prompt visual, storyboard, descrição de cena ou briefing criativo que represente pessoas, protegendo identidade, especificidade cultural e geográfica, diversidade etária e corporal, detalhes de deficiência, vestimentas e restrições anti-estereótipo.

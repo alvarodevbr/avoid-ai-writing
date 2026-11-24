@@ -1,7 +1,7 @@
 # Generated from detector/patterns.js (PATTERN_TABLES.types['sycophantic']). Do not edit; run scripts/build-vale.js.
 extends: existence
 message: 'Sycophantic tone: ''%s''.'
-link: https://github.com/conorbronsdon/avoid-ai-writing/blob/main/references/patterns.md
+link: https://github.com/alvarodevbr/avoid-ai-writing/blob/main/references/patterns.md
 level: error
 ignorecase: true
 nonword: true
